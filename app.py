@@ -1,6 +1,8 @@
 # import dependancy
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from models import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from models import User, Project, Milestone, Task
 
 # create a Flask object using file name as argument
 app = Flask(__name__) 
@@ -20,12 +22,20 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        print(email,password)
     else:
         print('No POST info')
     return render_template('login.html')
 @app.route('/register', methods=['GET','POST'])
 def register():
+    if request.method == 'POST':
+        firstName = request.form['firstName']
+        lastName = request.form['lastName']
+        email = request.form['email']
+        password = request.form['password']
+        passwordHash = generate_password_hash(password)
+        db.session.add(User(firstName=firstName, lastName=lastName, email=email, passwordHash=passwordHash))
+        db.session.commit()
+        return redirect(url_for('login'))
     return render_template('register.html')
 
 
