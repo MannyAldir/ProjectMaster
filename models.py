@@ -3,19 +3,23 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, ForeignKey
 from datetime import datetime, timezone
 from typing import Optional
+from flask_login import UserMixin
 
 class Base(DeclarativeBase):
     pass
 
 db = SQLAlchemy(model_class=Base)
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     userId: Mapped[int] = mapped_column(primary_key=True)
     firstName:Mapped[str] = mapped_column(nullable=False)
     lastName:Mapped[str] = mapped_column(nullable=False)
     passwordHash:Mapped[str] = mapped_column(nullable=False)
     email:Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     createdAt:Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc) ,nullable=False)
+
+    def get_id(self):
+        return str(self.userId)
 
 class Project(db.Model):
     projectId: Mapped[int] = mapped_column(primary_key=True)
