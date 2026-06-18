@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
-from flask_login import LoginManager, login_user
+from flask_login import LoginManager, login_required, login_user, logout_user
 
 # create a Flask object using file name as argument
 app = Flask(__name__) 
@@ -22,6 +22,7 @@ with app.app_context():
 # Create flask-Login manager
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'  # set the login view for unauthorized users
 
 # user loader function for flask-login
 @login_manager.user_loader
@@ -48,9 +49,14 @@ def login():
             return render_template('login.html', error='Invalid email or password')
 
 
-    else:
-        print('No POST info')
     return render_template('login.html')
+
+@app.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+    
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -66,6 +72,7 @@ def register():
     return render_template('register.html')
 
 @app.route('/dashboard', methods=['GET','POST'])
+@login_required
 def dashboard():
     return render_template('dashboard.html')
 
