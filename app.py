@@ -1,8 +1,9 @@
 # import dependancy
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
 # create a Flask object using file name as argument
 app = Flask(__name__) 
@@ -75,6 +76,33 @@ def register():
 @login_required
 def dashboard():
     return render_template('dashboard.html')
+
+@app.route('/projects', methods=['GET','POST'])
+@login_required
+def project_page():
+    projects = Project.query.filter_by(userId=current_user.userId).all()
+    return render_template('projects.html', projects=projects)
+
+@app.route('/project/new', methods=['GET','POST'])
+@login_required
+def new_project():
+    if request.method == 'POST':
+        projectName = request.form['projectName']
+        description = request.form['description']
+        status = request.form['status']
+        startDate = request.form['startDate']
+
+        # convert html date input to datetime object
+        if startDate:
+            startDate = datetime.strptime(startDate, '%Y-%m-%d')
+        else:
+            startDate = None
+
+
+        db.session.add(Project(userId=current_user.userId, projectName=projectName, description=description, status=status, startDate=startDate))
+        db.session.commit()
+        return redirect(url_for('project_page'))
+    return render_template('new_project.html')
 
 
 if __name__ == '__main__':

@@ -6,8 +6,7 @@
     <title>Project Master</title>
 </head>
 <body>
-    <h1>Dashboard</h1>
-    <h2>Welcome, {{ current_user.firstName | capitalize }}</h2>
+    <h1>Projects</h1>
 
     <div class="nav-layout">
         <nav class="nav-bar">
@@ -20,6 +19,26 @@
                 <button type="submit">Logout</button>
             </form>
         </nav>
+    </div>
+
+    <div class="new-prj-bttn">
+        <a href="{{ url_for('new_project')}}">Create New Project</a>
+    
+
+    </div>
+    
+    <div class="project-list">
+        {% for project in projects %}
+            <div class = "project-item">
+                <p>{{ project.projectName }}</p>
+                <p>{{ project.description }}</p>
+                <p>{{ project.startDate }}</p>
+                <p>{{ project.status }}</p>
+            </div>
+        {% else %}
+            <p>No projects available</p>
+        {% endfor %}
+
     </div>
     
 </body>
