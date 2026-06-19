@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 
+
 # create a Flask object using file name as argument
 app = Flask(__name__) 
 
@@ -103,6 +104,20 @@ def new_project():
         db.session.commit()
         return redirect(url_for('project_page'))
     return render_template('new_project.html')
+
+@app.route('/project/<int:projectId>', methods=['GET','POST'])
+@login_required
+def edit_project(projectId):
+        
+        project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first()
+        if request.method == 'POST':
+            project.projectName = request.form['projectName']
+            project.description = request.form['description']
+            project.status = request.form['status']
+            project.startDate = datetime.strptime(request.form['startDate'], '%Y-%m-%d') if request.form['startDate'] else None
+            db.session.commit()
+            return redirect(url_for('project_page'))
+        return render_template('edit_project.html', project=project)
 
 
 if __name__ == '__main__':

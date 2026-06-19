@@ -6,9 +6,7 @@
     <title>Project Master</title>
 </head>
 <body>
-    <h1>Projects</h1>
-
-    <div class="nav-layout">
+        <div class="nav-layout">
         <nav class="nav-bar">
             <ul>
                 <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
@@ -20,6 +18,8 @@
             </form>
         </nav>
     </div>
+    
+    <h1>Projects</h1>
 
     <div class="new-prj-bttn">
         <a href="{{ url_for('new_project')}}">Create New Project</a>
@@ -34,7 +34,13 @@
                 <p>{{ project.description }}</p>
                 <p>{{ project.startDate }}</p>
                 <p>{{ project.status }}</p>
+                
             </div>
+
+            <div class = "edit-project">
+                <a href="{{ url_for('edit_project', projectId=project.projectId) }}">Edit Project</a>
+            </div>
+
         {% else %}
             <p>No projects available</p>
         {% endfor %}
