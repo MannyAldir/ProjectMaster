@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Master</title>
+</head>
+<body>
+    
+    <div class="project-card">
+        <div class="project-card-header">
+            <h2 class="project-title">{{ project.projectName  }}</h2>
+             
+            {% if project.startDate %}
+              <p><strong>Start Date:</strong> {{ project.startDate }}</p>
+            {% else %}
+              <p><strong>Start Date:</strong>No start date provided</p>
+            {% endif %}
+        </div>
+
+        <div class="project-card-body">
+            <p><strong>Status:</strong> {{ project.status }}</p>
+            <p><strong>Description:</strong> {{ project.description}}</p> 
+            <h3>Milestones:</h3>
+            <div>
+                {% if milestones %}
+
+                    {% for milestone in milestones%}
+                    <p><strong>Milestone:</strong> {{ milestone.milestoneName }}</p>
+                    <p><strong>Due Date:</strong> {{ milestone.endDate }}</p>
+                    <p><strong>Status:</strong> {{ milestone.status }}</p>
+                    {% if milestone.description %}
+                        <p><strong>Description:</strong> {{ milestone.description }}</p>
+                    {% else %}
+                        <p><strong>Description:</strong> No description provided</p>
+                    {% endif %}
+
+                        <ul>
+                            {% for task in tasks %}
+                                {% if task.milestoneId == milestone.milestoneId %}
+                                <li>{{ task.taskName }}</li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    {% endfor %}
+                    
+                    {% else %}
+                      
+                    None
+                    {% endif %}
+
+                    
+                    
+            </div>
+
+           <p><strong>Independent Tasks:</strong></p>
+           {% if independentTasks %}
+              <ul>
+                {% for task in independentTasks %}
+                  <li> {{ task.taskName }}</li>
+                {% endfor %} 
+              </ul>
+            {% endif %}
+           
+        </div>
+    </div>
+    
+</body>
+</html>

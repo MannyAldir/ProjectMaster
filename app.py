@@ -105,7 +105,7 @@ def new_project():
         return redirect(url_for('project_page'))
     return render_template('new_project.html')
 
-@app.route('/project/<int:projectId>', methods=['GET','POST'])
+@app.route('/project/<int:projectId>/edit', methods=['GET','POST'])
 @login_required
 def edit_project(projectId):
         
@@ -118,6 +118,29 @@ def edit_project(projectId):
             db.session.commit()
             return redirect(url_for('project_page'))
         return render_template('edit_project.html', project=project)
+
+@app.route('/project/<int:projectId>', methods=['GET'])
+@login_required
+def project_detail(projectId):
+    
+    #query for projects
+    project = Project.query.filter_by(
+        projectId = projectId, userId=current_user.userId
+    ).first_or_404()
+    
+    # query for milestone that belong to the project
+    milestones = Milestone.query.filter_by(projectId = projectId).all()
+
+    # query for tasks that are apart of milestones
+    tasks = Task.query.filter(
+        Task.projectId == projectId, Milestone.milestoneId != None
+    ).all()
+
+    # query for tasks that are independent of milestones
+    independentTasks = Task.query.filter_by(projectId = projectId, milestoneId=None)
+
+    return render_template('project_detail.html', milestones=milestones, tasks=tasks,independentTasks=independentTasks, project=project)
+
 
 
 if __name__ == '__main__':
