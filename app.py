@@ -1,5 +1,5 @@
 # import dependancy
-from datetime import datetime
+from datetime import datetime, date
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
@@ -99,7 +99,6 @@ def new_project():
         else:
             startDate = None
 
-
         db.session.add(Project(userId=current_user.userId, projectName=projectName, description=description, status=status, startDate=startDate))
         db.session.commit()
         return redirect(url_for('project_page'))
@@ -114,7 +113,7 @@ def edit_project(projectId):
             project.projectName = request.form['projectName']
             project.description = request.form['description']
             project.status = request.form['status']
-            project.startDate = datetime.strptime(request.form['startDate'], '%Y-%m-%d') if request.form['startDate'] else None
+            project.startDate = datetime.strptime(request.form['startDate'], '%Y-%m-%d').date() if request.form['startDate'] else None
             db.session.commit()
             return redirect(url_for('project_page'))
         return render_template('edit_project.html', project=project)
@@ -137,10 +136,31 @@ def project_detail(projectId):
     ).all()
 
     # query for tasks that are independent of milestones
-    independentTasks = Task.query.filter_by(projectId = projectId, milestoneId=None)
+    independentTasks = Task.query.filter_by(projectId = projectId, milestoneId=None).all()
 
     return render_template('project_detail.html', milestones=milestones, tasks=tasks,independentTasks=independentTasks, project=project)
 
+@app.route('/project/<int:projectId>/newMilestone', methods=['GET','POST'])
+@login_required
+def new_milestone(projectId):
+    project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
+    
+    if request.method == 'POST':
+        milestoneName = request.form['milestoneName']
+        milestoneStatus = request.form['milestoneStatus']
+        milestoneDescription = request.form['milestoneDescription']
+        milestoneStartDate = datetime.strptime(request.form['milestoneStartDate'], '%Y-%m-%d').date() if request.form['milestoneStartDate'] else None
+        milestoneEndDate = datetime.strptime(request.form['milestoneEndDate'], '%Y-%m-%d').date() if request.form['milestoneEndDate'] else None
+        newMilestone=Milestone(
+            projectId = projectId, milestoneName = milestoneName, status = milestoneStatus,
+            description = milestoneDescription, startDate = milestoneStartDate,
+            endDate = milestoneEndDate
+        )
+
+        db.session.add(newMilestone)
+        db.session.commit()
+        return redirect(url_for('project_detail', projectId=project.projectId))
+    return render_template('new_milestone.html',project=project)
 
 
 if __name__ == '__main__':

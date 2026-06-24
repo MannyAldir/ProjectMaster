@@ -23,27 +23,35 @@
 
     <div class="new-prj-bttn">
         <a href="{{ url_for('new_project')}}">Create New Project</a>
-    
-
     </div>
     
     <div class="project-list">
         {% for project in projects %}
-            <div class = "project-item">
-                <p>{{ project.projectName }}</p>
-                <p>{{ project.description }}</p>
-                <p>{{ project.startDate }}</p>
-                <p>{{ project.status }}</p>
+            <div class = "project-card">
+                <h2>{{ project.projectName }}</h2>
+                
+                {% if project.description %}
+                  <p>{{ project.description }}</p>  
+                {% else %}
+                  <p>No description provided</p>
+                {% endif %}
+                
+                {% if project.startDate %}
+                  <p><strong>Start Date:</strong> {{ project.startDate }}</p>
+                {% else %}
+                  <p><strong>Start Date:</strong> No start date provided</p>
+                {% endif %}
+                
+                <p><strong>Status:</strong> {{ project.status }}</p>
                 
             </div>
 
-            <div class = "edit-project">
+            <div class = "project-actions">
                 <a href="{{ url_for('edit_project', projectId=project.projectId) }}">Edit Project</a>
-            </div>
-            
-            <div class = "visit-project">
                 <a href="{{ url_for('project_detail', projectId=project.projectId)}}">View details</a>
             </div>
+            
+        
 
         {% else %}
             <p>No projects available</p>

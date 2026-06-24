@@ -6,6 +6,18 @@
     <title>Project Master</title>
 </head>
 <body>
+    <div class="nav-layout">
+        <nav class="nav-bar">
+            <ul>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('project_page') }}">Projects</a></li>
+            </ul>
+
+            <form action="{{ url_for('logout')}}" method="POST">
+                <button type="submit">Logout</button>
+            </form>
+        </nav>
+    </div>
     
     <div class="project-card">
         <div class="project-card-header">
@@ -21,7 +33,7 @@
         <div class="project-card-body">
             <p><strong>Status:</strong> {{ project.status }}</p>
             <p><strong>Description:</strong> {{ project.description}}</p> 
-            <h3>Milestones:</h3>
+            <h3>Milestones:</h3> <a href="{{ url_for('new_milestone', projectId=project.projectId) }}">Create Milestone</a>
             <div>
                 {% if milestones %}
 
@@ -48,9 +60,6 @@
                       
                     None
                     {% endif %}
-
-                    
-                    
             </div>
 
            <p><strong>Independent Tasks:</strong></p>
@@ -60,8 +69,9 @@
                   <li> {{ task.taskName }}</li>
                 {% endfor %} 
               </ul>
+            {% else %}
+              <p>No independent tasks</p>
             {% endif %}
-           
         </div>
     </div>
     
