@@ -162,6 +162,24 @@ def new_milestone(projectId):
         return redirect(url_for('project_detail', projectId=project.projectId))
     return render_template('new_milestone.html',project=project)
 
+@app.route('/project/<int:projectId>/<int:milestoneId>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_milestone(projectId,milestoneId):
+    project = Project.query.filter_by(projectId=projectId,userId=current_user.userId).first_or_404()
+    milestone = Milestone.query.filter_by(projectId=projectId,milestoneId=milestoneId).first_or_404()
+
+    if request.method == 'POST':
+        milestone.milestoneName = request.form['milestoneName']
+        milestone.description = request.form['milestoneDescription']
+        milestone.status = request.form['milestoneStatus']
+        milestone.start_date = datetime.strptime(request.form['milestoneStartDate']).date() if request.form['milestoneStartDate'] else None
+        milestone.end_date = datetime.strptime(request.form['milestoneEndDate']).date if request.form['milestoneEndDate'] else None
+        milestone.status = request.form['milestoneStatus']
+        db.session.commit()
+        return redirect('project_detail')
+    return render_template('edit_milestone.html',milestone=milestone, project=project)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

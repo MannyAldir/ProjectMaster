@@ -38,6 +38,7 @@
                 {% if milestones %}
 
                     {% for milestone in milestones%}
+                    <a href="{{ url_for('edit_milestone', projectId=project.projectId, milestoneId=milestone.milestoneId) }}">Edit Milestone</a>
                     <p><strong>Milestone:</strong> {{ milestone.milestoneName }}</p>
                     <p><strong>Due Date:</strong> {{ milestone.endDate }}</p>
                     <p><strong>Status:</strong> {{ milestone.status }}</p>
