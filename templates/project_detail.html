@@ -51,11 +51,13 @@
                         <ul>
                             {% for task in tasks %}
                                 {% if task.milestoneId == milestone.milestoneId %}
-                                <li>{{ task.taskName }}</li>
+                                <li>{{ task.taskName }} {{ task.status }}</li>
                                 {% endif %}
                             {% endfor %}
                         </ul>
                     {% endfor %}
+
+                    <a href="{{ url_for('new_task', projectId = project.projectId)}}">Add task to milestone</a>
                     
                     {% else %}
                       
@@ -67,7 +69,7 @@
            {% if independentTasks %}
               <ul>
                 {% for task in independentTasks %}
-                  <li> {{ task.taskName }}</li>
+                  <li> {{ task.taskName }} {{ task.status }}</li>
                 {% endfor %} 
               </ul>
             {% else %}

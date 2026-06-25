@@ -132,7 +132,7 @@ def project_detail(projectId):
 
     # query for tasks that are apart of milestones
     tasks = Task.query.filter(
-        Task.projectId == projectId, Milestone.milestoneId != None
+        Task.projectId == projectId, Task.milestoneId != None
     ).all()
 
     # query for tasks that are independent of milestones
@@ -172,14 +172,37 @@ def edit_milestone(projectId,milestoneId):
         milestone.milestoneName = request.form['milestoneName']
         milestone.description = request.form['milestoneDescription']
         milestone.status = request.form['milestoneStatus']
-        milestone.start_date = datetime.strptime(request.form['milestoneStartDate']).date() if request.form['milestoneStartDate'] else None
-        milestone.end_date = datetime.strptime(request.form['milestoneEndDate']).date if request.form['milestoneEndDate'] else None
+        milestone.startDate = datetime.strptime(request.form['milestoneStartDate'], '%Y-%m-%d').date() if request.form['milestoneStartDate'] else None
+        milestone.endDate= datetime.strptime(request.form['milestoneEndDate', '%Y-%m-%d']).date() if request.form['milestoneEndDate'] else None
         milestone.status = request.form['milestoneStatus']
         db.session.commit()
-        return redirect('project_detail')
+        return redirect(url_for('project_detail', projectId=projectId))
     return render_template('edit_milestone.html',milestone=milestone, project=project)
 
+@app.route('/project/<int:projectId>/newTask', methods=['GET', 'POST'])
+@login_required
+def new_task(projectId):
+    project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
+    milestones = Milestone.query.filter_by(projectId=projectId).all()
+    
+    if request.method == 'POST':
+        taskName = request.form['taskName']
+        taskDescription = request.form['taskDescription']
+        taskDueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d') if request.form['taskDueDate'] else None
+        taskStatus = request.form['taskStatus']
+        milestoneId = int(request.form['taskAssignment'])
 
-
+        newTask = Task(
+            projectId = projectId, milestoneId=milestoneId,
+            taskName=taskName, description=taskDescription,
+            dueDate = taskDueDate, status=taskStatus
+        ) if milestoneId != 0 else Task(projectId= projectId, milestoneId=None, taskName = taskName, 
+                                        description=taskDescription, dueDate = taskDueDate, status = taskStatus)
+        
+        db.session.add(newTask)
+        db.session.commit()
+        return redirect(url_for('project_detail', projectId=projectId))
+    return render_template('new_task.html', projectId=projectId, milestones=milestones)
+        
 if __name__ == '__main__':
     app.run(debug=True)

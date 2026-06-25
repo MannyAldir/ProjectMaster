@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Master</title>
+</head>
+<body>
+    <h1>Create a new task</h1>
+
+    <form action=" {{ url_for('new_task', projectId=projectId) }}" method="POST">
+        <div class = 'form-group'>
+            <label for = taskName>Task Name:</label>
+            <input type="text" id="taskName" name="taskName" required>
+        </div>
+
+        <div class= 'form-group'>
+            <label for= "taskDescription">Task Description:</label>
+            <textarea id="taskDescription" name="taskDescription"></textarea>
+        </div>
+
+        <div class = 'form-group'>
+            <label for="taskStatus">Status:</label>
+            <select id="taskStatus" name="taskStatus">
+                <option value="Not Started">Not Started</option>
+                <option value="Started">Started</option>
+                <option value="Completed">Completed</option>
+            </select>
+        </div>
+
+        <div class = 'form-group'>
+            <label for ='taskDueDate'>Due Date:</label>
+            <input type="date" id="taskDueDate" name="taskDueDate">
+        </div>
+
+        <div class = 'form-group'>
+            <label for = 'taskAssignment'>Task Assignment:</label>
+            <select id="taskAssignment" name="taskAssignment">
+                <option value="0">Independent Task</option>
+                {% for milestone in milestones %}
+                  <option value=" {{ milestone.milestoneId }}">{{ milestone.milestoneName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class = 'submit-button'>
+            <button type="submit">Create Task</button>
+        </div>
+
+
+    </form>
+    
+</body>
+</html>
