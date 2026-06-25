@@ -173,7 +173,7 @@ def edit_milestone(projectId,milestoneId):
         milestone.description = request.form['milestoneDescription']
         milestone.status = request.form['milestoneStatus']
         milestone.startDate = datetime.strptime(request.form['milestoneStartDate'], '%Y-%m-%d').date() if request.form['milestoneStartDate'] else None
-        milestone.endDate= datetime.strptime(request.form['milestoneEndDate', '%Y-%m-%d']).date() if request.form['milestoneEndDate'] else None
+        milestone.endDate= datetime.strptime(request.form['milestoneEndDate'],'%Y-%m-%d').date() if request.form['milestoneEndDate'] else None
         milestone.status = request.form['milestoneStatus']
         db.session.commit()
         return redirect(url_for('project_detail', projectId=projectId))
@@ -203,6 +203,23 @@ def new_task(projectId):
         db.session.commit()
         return redirect(url_for('project_detail', projectId=projectId))
     return render_template('new_task.html', projectId=projectId, milestones=milestones)
+
+@app.route('/project/<int:projectId>/task/<int:taskId>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_task(projectId,taskId):
+    task = Task.query.filter_by(projectId=projectId, taskId=taskId).first_or_404()
+    if request.method == 'POST':
+        # extract form input
+        task.taskName = request.form['taskName']
+        task.description = request.form['taskDescription']
+        task.dueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d').date() if \
+        request.form['taskDueDate'] else None
+        task.status= request.form['taskStatus']
+        db.session.commit()
+        return redirect(url_for('project_detail',projectId=projectId))
+    return render_template('edit_task.html', task=task)
+        
+
         
 if __name__ == '__main__':
     app.run(debug=True)

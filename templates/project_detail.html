@@ -32,7 +32,11 @@
 
         <div class="project-card-body">
             <p><strong>Status:</strong> {{ project.status }}</p>
-            <p><strong>Description:</strong> {{ project.description}}</p> 
+            {% if project.description%}
+              <p><strong>Description:</strong> {{ project.description }}</p>
+            {% else %}
+              <p><strong>Description:</strong> No description provided</p>
+            {% endif %}
             <h3>Milestones:</h3> <a href="{{ url_for('new_milestone', projectId=project.projectId) }}">Create Milestone</a>
             <div>
                 {% if milestones %}
@@ -51,7 +55,8 @@
                         <ul>
                             {% for task in tasks %}
                                 {% if task.milestoneId == milestone.milestoneId %}
-                                <li>{{ task.taskName }} {{ task.status }}</li>
+                                <li>{{ task.taskName }}  <strong>Status:</strong> {{ task.status }}  
+                                <a href="{{ url_for('edit_task', projectId=project.projectId, taskId=task.taskId)}}">edit task</a></li>
                                 {% endif %}
                             {% endfor %}
                         </ul>
@@ -66,10 +71,11 @@
             </div>
 
            <p><strong>Independent Tasks:</strong></p>
+           <a href=" {{ url_for('new_task', projectId = project.projectId) }}">Create independent task</a>
            {% if independentTasks %}
               <ul>
                 {% for task in independentTasks %}
-                  <li> {{ task.taskName }} {{ task.status }}</li>
+                  <li> {{ task.taskName }} <strong>Status:</strong> {{ task.status }}</li>
                 {% endfor %} 
               </ul>
             {% else %}
