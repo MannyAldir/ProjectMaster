@@ -1,9 +1,10 @@
 # import dependancy
 from datetime import datetime, date
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from forms import RegistrationForm
 
 
 # create a Flask object using file name as argument
@@ -62,16 +63,24 @@ def logout():
 
 @app.route('/register', methods=['GET','POST'])
 def register():
-    if request.method == 'POST':
-        firstName = request.form['firstName']
-        lastName = request.form['lastName']
-        email = request.form['email']
-        password = request.form['password']
-        passwordHash = generate_password_hash(password)
-        db.session.add(User(firstName=firstName, lastName=lastName, email=email, passwordHash=passwordHash))
-        db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('register.html')
+        form = RegistrationForm()
+        if form.validate_on_submit():
+            # Check if user exists
+            if not User.query.filter_by(email=form.email.data).first():
+                new_user = User(
+                    firstName=form.first_name.data,
+                    lastName= form.last_name.data,
+                    email=form.email.data,
+                    # hash/salt password before storing in database
+                    password=generate_password_hash(form.password.data)
+                )
+                db.session.add(new_user)
+                db.session.commit()
+                return redirect(url_for('login'))
+            else:
+                flash('An account with that email has already been registered.', 'error')
+                return render_template('register.html',form=form)
+        return render_template('register.html', form=form)
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required

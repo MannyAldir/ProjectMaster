@@ -7,33 +7,58 @@
 </head>
 <body>
     <h1>Register</h1>
-    <form action="/register" method="POST">
-        <div>
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required>
+    <form action="{{ url_for('register')}}" method="POST">
+        {{ form.hidden_tag() }}
+        
+        
+        <div class="form-group">
+            {{ form.first_name.label }}
+            {{ form.first_name}}
+
+            {% for error in form.first_name.errors %}
+              <p class="error">{{ error }}</p>
+            {% endfor %}
         </div>
         <div>
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required>
+            {{ form.last_name.label }}
+            {{ form.last_name }}
+            {% for error in form.last_name.errors %}
+              <p class="error">{{ error }}</p>
+            {% endfor %}
         </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email }}
+            {% for error in form.email.errors %}
+              <p class = "error"> {{ error }}</p>
+            {% endfor %}
         </div>
 
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+        <div class= "form-group">
+            {{ form.password.label }}
+            {{ form.password }}
+            {% for error in form.password.errors %}
+              <p class="error">{{ error }}</p>
+            {% endfor %}
         </div>
 
-        <p class="button">
+        <div class = "form-group">
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password }}
+            {% for error in form.confirm_password.errors %}
+              <p class="error">{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="button">
             <button type="submit">Register</button>
         </div>
 
     </form>
     
     <form action="{{ url_for('login')}}" method="GET">
-        <button type="submit">Back to Login</button>
+        <button type="submit" class="submit-button">Back to Login</button>
     </form>
+
 </body>
 </html>
