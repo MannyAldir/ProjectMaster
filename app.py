@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
-from forms import RegistrationForm
+from forms import RegistrationForm, LoginForm
 
 
 # create a Flask object using file name as argument
@@ -35,24 +35,24 @@ def load_user(user_id):
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/login', methods=['GET','POST']) # decorator that creates directory path for function
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        # Query database by email
-        user = User.query.filter_by(email=email).first()
-        if user:
-            # check password hash
-            if check_password_hash(user.passwordHash, password):
-                # login user and redirect to dashboard
-                login_user(user)
-                return redirect(url_for('dashboard'))
-            else:
-                return render_template('login.html', error='Invalid password')
+    # Create form object
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        # check if user exists by email
+        query_user = User.query.filter_by(email=form.email.data).first()
+
+        # Check if query returns a user and password matches database
+        if query_user and check_password_hash(query_user.passwordHash,form.password.data):
+            # authenticate user
+            login_user(query_user)
+            return redirect(url_for('dashboard'))
         else:
-            return render_template('login.html', error='Invalid email or password')
+            flash("Invalid email or password", 'error')
+            return render_template('login.html', form=form)
 
-
-    return render_template('login.html')
+    return render_template('login.html',form=form)
+    
 
 @app.route('/logout', methods=['POST'])
 @login_required
@@ -72,7 +72,7 @@ def register():
                     lastName= form.last_name.data,
                     email=form.email.data,
                     # hash/salt password before storing in database
-                    password=generate_password_hash(form.password.data)
+                    passwordHash=generate_password_hash(form.password.data)
                 )
                 db.session.add(new_user)
                 db.session.commit()
@@ -85,7 +85,7 @@ def register():
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    return render_template('dashboard.html',user=current_user.firstName)
 
 @app.route('/projects', methods=['GET','POST'])
 @login_required

@@ -20,4 +20,17 @@ class RegistrationForm(FlaskForm):
                              ]
         )
 
-
+class LoginForm(FlaskForm):
+    email = EmailField(
+        validators=[
+            DataRequired('Email Required'),
+            Email(granular_message=True)
+        ],
+        filters=[lambda x:x.strip().lower() if x else None]
+    )
+    password = PasswordField(
+        label= 'Password',
+        validators=[
+            DataRequired('Password Required')
+        ]
+    )
