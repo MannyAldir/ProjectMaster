@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <title>Project Master</title>
+</head>
+<body>
+    <header class="top-bar">
+        <div class="top-bar-left">
+            <span class="top-bar-left-text">Project Master</span>
+            <span class="top-bar-left-logo">
+              <img class="logo" alt="project master logo" src="{{ url_for('static', filename='images/pm-logo.png')}}" height="50" width="50">
+            </span>
+        </div>
+
+        <div class="top-bar-right">
+          <span class="top-bar-right-text">{{ current_user.userName }}</span>
+          <i class="ti ti-bell"></i>
+          </span>
+        </div>
+
+    </header>
+
+    <div class = "app-body">
+      <nav class = "side-bar" aria-label="Main navigation">
+        <ul class = "nav-links">
+          <li class="{{ 'nav-active' if request.endpoint == 'dashboard' else ''}}"><a href = "{{ url_for('dashboard') }}">Home</a></li>
+          <li class="{{ 'nav-active' if request.endpoint == 'projects' else ''}}"><a href = "{{ url_for('projects') }}">Projects</a></li>
+        </ul>
+      </nav>
+
+      <main class = "main-content">
+        {% block content %} {% endblock %}
+      </main>
+    </div>
+</body>
+</html>

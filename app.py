@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
+from sqlalchemy import select, func
 
 
 # create a Flask object using file name as argument
@@ -76,6 +77,25 @@ def register():
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
+    
+    # calculate dashboard metrics
+
+    # Calculate total number of active projects
+    num_of_active_projects = Project.query.filter_by(userId=current_user.userId, status='active').count()
+    db.session.scalar(select(func.count(Project.projectId)).where(
+        Project.userId == current_user.userId,
+        Project.status == 'active'
+    ))
+
+    # return a list of current user's overdue milestones
+    overdue_milestones = []
+    milestones = Milestone.query.filter_by(userId=current_user.userId).all()
+    for milestone in milestones:
+        if milestone.status != 'completed' and milestone.dueDate <= datetime.today():
+            # append overdue object
+            overdue_milestones.append(milestone)
+ 
+
     return render_template('dashboard.html')
 
 @app.route('/projects', methods=['GET','POST'])
