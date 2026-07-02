@@ -1,5 +1,5 @@
 # import dependancy
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
@@ -81,22 +81,122 @@ def dashboard():
     # calculate dashboard metrics
 
     # Calculate total number of active projects
-    num_of_active_projects = Project.query.filter_by(userId=current_user.userId, status='active').count()
-    db.session.scalar(select(func.count(Project.projectId)).where(
+    
+    num_of_active_project = db.session.scalar(select(func.count(Project.projectId)).where(
         Project.userId == current_user.userId,
         Project.status == 'active'
     ))
 
-    # return a list of current user's overdue milestones
-    overdue_milestones = []
-    milestones = Milestone.query.filter_by(userId=current_user.userId).all()
-    for milestone in milestones:
-        if milestone.status != 'completed' and milestone.dueDate <= datetime.today():
-            # append overdue object
-            overdue_milestones.append(milestone)
- 
 
-    return render_template('dashboard.html')
+    # find upcoming within 7 days of duedate: milestones,tasks and independent tasks then concatinate them into one list
+              #         today<=due_date<=today+7
+    today = date.today()
+    seven_days_later = today + timedelta(7)
+
+
+    # query for milestones that are due within 7 days of today
+    stmt = (
+        select(Milestone)
+        .join(Project,Project.projectId == Milestone.projectId)
+        .where(
+            Milestone.status != 'Completed',
+            Project.userId == current_user.userId,
+            today <= Milestone.endDate,
+            Milestone.endDate <= seven_days_later
+        )
+    )
+    upcoming_milestones = db.session.execute(stmt).scalars().all()
+
+    # query for standalone tasks
+    # I need to select all columns in tasks where the task belongs to current user
+    # the task should not be completed
+    # the task should not have a milestone Id
+    # the tasks due date should be between today and today +7
+    stmt = (
+        select(Task)
+        .join(Project, Project.projectId == Task.projectId)
+        .where(
+            Project.userId == current_user.userId,
+            Task.status != 'Completed',
+            Task.milestoneId.is_(None),
+            today <= Task.dueDate,
+            Task.dueDate <= seven_days_later
+        )
+    )
+
+    upcoming_standalone_tasks = db.session.execute(stmt).scalars().all()
+
+    # Query for milestone tasks
+    # 1) the task milestoneId should not be None
+    # 2) the task should not be completed
+    # 3) the task should belong to the user
+    # 4) the milestone due date should be between today and 7 days from today
+
+    # This query needs 2 joins because I need to access milestone table and task table
+    stmt = (
+        select(Task)
+        .join(Milestone, Task.milestoneId == Milestone.milestoneId)
+        .join(Project, Project.projectId == Task.projectId)
+        .where(
+            Task.milestoneId.is_not(None),
+            Task.status != 'Completed',
+            Project.userId == current_user.userId,
+            today <= Milestone.endDate,
+            Milestone.status != 'Completed',
+            Milestone.endDate <= seven_days_later
+        )
+    )
+    upcoming_milestone_tasks = db.session.execute(stmt).scalars().all()
+
+    # normalize data
+    normalized = []
+    
+    for m in upcoming_milestones:
+        normalized.append({'type':'Milestone', 'name':m.milestoneName, 'due': m.endDate, 'project_link': url_for('project_detail', projectId=m.projectId)})
+
+    for mt in upcoming_milestone_tasks:
+        normalized.append({'type' : 'Task', 'name': mt.taskName, 'due' : mt.dueDate, 'project_link' : url_for('project_detail', projectId=mt.projectId)})
+
+    for t in upcoming_standalone_tasks:
+        normalized.append({'type' : 'Task', 'name' : t.taskName, 'due' : t.dueDate, 'project_link' : url_for('project_detail',projectId=t.projectId)})
+
+    # sort
+    sorted_deliverables = sorted(normalized, key=lambda x:(x['due'], 0 if x['type'] == 'Milestone' else 1))
+
+
+    stmt = (
+        select(
+            Project.projectId, Project.projectName,
+            func(Task.taskId.label('total_tasks'), func(filter(Task.status == 'Completed')).label('completed_tasks'))
+        )
+        .join(Task, Task.projectId == Project.projectId)
+        .where(Project.userId == current_user.userId)
+        .group_by(Project.projectId)
+
+    )
+
+    tasks = db.session.execute(stmt).all()
+
+    # normalize data
+    normalized = []
+
+    for t in tasks :
+        
+        percent = ( t.completed_tasks/t.total_tasks ) * 100 if t.total_tasks > 0 else 0
+        normalized.append({
+            'name' : t.projectName, 'id' : t.projectId,
+            'ttc' :  t.total_tasks - t.completed_tasks,
+            'link' : url_for('project_detail', projectId=t.projectId),
+            'percent' : percent
+            
+        })
+    
+
+ 
+    return render_template(
+        'dashboard.html', upcoming_deliverables = sorted_deliverables,
+        active_projects=num_of_active_project
+        )
 
 @app.route('/projects', methods=['GET','POST'])
 @login_required
@@ -238,7 +338,6 @@ def edit_task(projectId,taskId):
         db.session.commit()
         return redirect(url_for('project_detail',projectId=projectId))
     return render_template('edit_task.html', task=task)
-        
 
         
 if __name__ == '__main__':
