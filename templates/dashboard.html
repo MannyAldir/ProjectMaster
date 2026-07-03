@@ -1,26 +1,94 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Master</title>
-</head>
-<body>
-    <div class="nav-layout">
-        <nav class="nav-bar">
-            <ul>
-                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
-                <li><a href="{{ url_for('project_page') }}">Projects</a></li>
-            </ul>
+{% extends "base.html" %}
 
-            <form action="{{ url_for('logout')}}" method="POST">
-                <button type="submit">Logout</button>
-            </form>
-        </nav>
-    </div>
+{% block content %}
 
-    <h1>Dashboard</h1>
-    <h2>Welcome, {{ current_user.firstName | capitalize }}</h2>
+<div class="dashboard-container" aria-label="Holds your important milestone metric and tables">
+  <!-- DASHBOARD METRIC SECTION -->
+  <section class="dashboard-metrics" aria-label="Your metric data section">
+    <article class="metric-card">
+      <h2 class="metric-title">Active Projects</h2>
+      <p>{{ active_projects }}</p>
+    </article>
+  </section>
+
+  <!-- Dashboard Table SECTION -->
+  <section class="dashboard-tables" aria-label="Your table data">
+    <article class="table-card">
+      <h2 class="metric-title">Overdue items</h2>
+      <table class="data-table">
+          <thead>
+              <tr>
+                  <th>Project</th>
+                  <th>Task</th>
+                  <th>Days Overdue</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for i in overdue_items %}
+              <tr>
+                  <td>{{ i['project'] }}</td>
+                  <td>{{ i['task'] }}</td>
+                  <td>{{ i['dod'] }}</td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+    </article>
+
+    <article class="table-card">
+      <h2 class="metric-title">Upcoming deliverables</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Due Date</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
     
-</body>
-</html>
+         <tbody>
+          {% for item in upcoming_deliverables %}
+          <tr>
+            <td>{{ item['name'] }}</td>
+            <td>{{ item['type'] }}</td>
+            <td>{{ item['due'] }}</td>
+            <td><a href="{{ item['project_link'] }}">view</a></td>
+         </tr> 
+          {% endfor %}
+         </tbody>
+      </table>
+    </article>
+  
+  <article class="table-card" aria-label="Your active project progress bar">
+        <h2 class="metric-title">Progress Bar</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Progress</th>
+              <th>Tasks Till Complete</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in percent_and_ttc %}
+            <tr>
+              <td> {{ item['name'] }}</td>
+              <td>
+                <div class="progress-container">
+                  <div class="progress-fill" style="width: {{ item['percent']}}%;"></div>
+                </div>
+              </td>
+              <td>{{ item['ttc'] }}</td>
+              <td><a href="{{ item['link']  }}">View</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+        </table>
+      </article>
+  
+  </section>
+</div>
+{% endblock  %}
