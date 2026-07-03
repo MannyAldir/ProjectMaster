@@ -28,7 +28,7 @@
       <nav class = "side-bar" aria-label="Main navigation">
         <ul class = "nav-links">
           <li class="{{ 'nav-active' if request.endpoint == 'dashboard' else ''}}"><a href = "{{ url_for('dashboard') }}">Home</a></li>
-          <li class="{{ 'nav-active' if request.endpoint == 'projects' else ''}}"><a href = "{{ url_for('projects') }}">Projects</a></li>
+          <li class="{{ 'nav-active' if request.endpoint == 'project_page' else ''}}"><a href = "{{ url_for('project_page') }}">Projects</a></li>
         </ul>
       </nav>
 

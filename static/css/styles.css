@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 .app-body{
     display:flex;
     height: calc(100vh - 52px);
@@ -39,7 +43,6 @@
 
 .nav-links a{
     display: block;
-    width:100%; 
     padding: 10px 16px;
     color: black;
     text-decoration: none;
@@ -55,4 +58,119 @@
     font-weight: 500;
 }
 
+.dashboard-container{
+    max-width: 1100px;
+    margin-left: 0;
+    padding: 24px;
+}
+
+.dashboard-metrics{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,240px));
+    gap: 1rem;
+    margin-bottom: 1rem
+}
+
+.metric-card{
+    background-color: var(--surface-1);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap:8px
+
+}
+
+.dashboard-tables{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.table-card{
+    background-color: var(--surface-1);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+
+    text-align: left;
+
+}
+
+
+.card-success{
+    border-left: 3px solid #10b981;
+}
+
+.card-danger{
+    border-left: 3px solid #ef4444;
+}
+
+.data-table{
+    border-collapse: collapse;
+    width: 100%;
+    text-align: left;
+}
+
+.data-table th{
+    padding: 12px;
+}
+
+.data-table td{
+    padding: 16px;
+
+}
+.data-table tr{
+    border-bottom : 2px solid #e2e8f0;
+}
+
+
+thead tr{
+    background-color: #f8fafc;
+}
+
+.progress-container{
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+
+}
+
+.progress-fill{
+    height: 100%;
+    border-radius: 4px;
+    background-color: #4f8ef7;
+    transition: width 0.3s ease;
+
+}
+
+.metric-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 12px;
+    margin-top: 8px;
+}
+
+.project-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 1rem;
+    padding: 24px;
+    margin : 0 auto;
+}
+
+.project-card{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: left;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    margin-bottom: 1rem;
+    aspect-ratio: 1/1;
+}
 

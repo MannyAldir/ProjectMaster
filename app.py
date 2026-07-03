@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
-from sqlalchemy import select, func
+from sqlalchemy import select, func, case
 
 
 # create a Flask object using file name as argument
@@ -87,7 +87,6 @@ def dashboard():
         Project.status == 'active'
     ))
 
-
     # find upcoming within 7 days of duedate: milestones,tasks and independent tasks then concatinate them into one list
               #         today<=due_date<=today+7
     today = date.today()
@@ -134,7 +133,7 @@ def dashboard():
 
     # This query needs 2 joins because I need to access milestone table and task table
     stmt = (
-        select(Task)
+        select(Task, func.coalesce(Task.dueDate,Milestone.endDate).label('due_date'))
         .join(Milestone, Task.milestoneId == Milestone.milestoneId)
         .join(Project, Project.projectId == Task.projectId)
         .where(
@@ -146,7 +145,7 @@ def dashboard():
             Milestone.endDate <= seven_days_later
         )
     )
-    upcoming_milestone_tasks = db.session.execute(stmt).scalars().all()
+    upcoming_milestone_tasks = db.session.execute(stmt).all()
 
     # normalize data
     normalized = []
@@ -154,8 +153,8 @@ def dashboard():
     for m in upcoming_milestones:
         normalized.append({'type':'Milestone', 'name':m.milestoneName, 'due': m.endDate, 'project_link': url_for('project_detail', projectId=m.projectId)})
 
-    for mt in upcoming_milestone_tasks:
-        normalized.append({'type' : 'Task', 'name': mt.taskName, 'due' : mt.dueDate, 'project_link' : url_for('project_detail', projectId=mt.projectId)})
+    for mt, due_date in upcoming_milestone_tasks:
+        normalized.append({'type' : 'Task', 'name': mt.taskName, 'due' : due_date, 'project_link' : url_for('project_detail', projectId=mt.projectId)})
 
     for t in upcoming_standalone_tasks:
         normalized.append({'type' : 'Task', 'name' : t.taskName, 'due' : t.dueDate, 'project_link' : url_for('project_detail',projectId=t.projectId)})
@@ -167,7 +166,7 @@ def dashboard():
     stmt = (
         select(
             Project.projectId, Project.projectName,
-            func(Task.taskId.label('total_tasks'), func(filter(Task.status == 'Completed')).label('completed_tasks'))
+            func.count(Task.taskId).label('total_tasks'), func.count(Task.taskId).filter(Task.status == 'Completed').label('completed_tasks')
         )
         .join(Task, Task.projectId == Project.projectId)
         .where(Project.userId == current_user.userId)
@@ -187,21 +186,94 @@ def dashboard():
             'name' : t.projectName, 'id' : t.projectId,
             'ttc' :  t.total_tasks - t.completed_tasks,
             'link' : url_for('project_detail', projectId=t.projectId),
-            'percent' : percent
+            'percent' : round(percent,1)
             
         })
-    
+    percent_and_ttc = sorted(normalized, key=lambda x : (x['percent'],x['ttc']), reverse=True)
 
+    #over due deliverables
+    # Milestones, and milestone tasks and standaline tasks that have an end date
+    # standalone tasks with no end date shall be ignored?
+    # query seperately then concatinate?
+    
+    # query overdue milestones
+    stmt = (
+        select(Milestone, Project.projectName.label('projectName'))
+        .join(Project,Project.projectId == Milestone.projectId)
+        .where(
+            Milestone.status != 'Completed',
+            today > Milestone.endDate,
+            Project.userId == current_user.userId
+        )
+    )
+
+    overdue_milestones = db.session.execute(stmt).all()
+
+    # query overdue milestone tasks
+    stmt = (
+        select(Task, func.coalesce(Task.dueDate,Milestone.endDate).label('effective_due_date'), Project.projectName.label('projectName'))
+        .join(Project, Project.projectId == Task.projectId)
+        .join(Milestone, Milestone.milestoneId == Task.milestoneId)
+        .where(Task.milestoneId.is_not(None),
+               Project.userId == current_user.userId,
+               Task.status != 'Completed',
+               func.coalesce(Task.dueDate,Milestone.endDate) < today
+
+        )
+    )
+
+    overdue_milestone_tasks = db.session.execute(stmt).all()
+
+    # query overdue standalone tasks
+    stmt = (
+        select(Task, Project.projectName.label('projectName'))
+        .join(Project, Task.projectId == Project.projectId)
+        .where(
+            Task.milestoneId.is_(None),
+            Task.status != 'Completed',
+            Task.dueDate < today,
+            Project.userId == current_user.userId
+        )
+    )
+    stand_alone_tasks = db.session.execute(stmt).all()
+
+    # standardize overdue deliverables using dictionary
+    normalized = []
+    for m, p in overdue_milestones:
+        dod = (today - m.endDate).days
+        normalized.append({'task': m.milestoneName, 'project' : p, 'dod' : dod })
+
+    for mt, dd, p in overdue_milestone_tasks:
+        dod = (today - dd).days
+        normalized.append({'task' : mt.taskName, 'project' : p, 'dod' : dod})
+
+    for t, p in stand_alone_tasks:
+        dod = (today - t.dueDate).days
+        normalized.append({'task' : t.taskName, 'project' : p, 'dod' : dod})
+    
+    overdue_items = sorted(normalized,key = lambda x:x['dod'])
  
     return render_template(
         'dashboard.html', upcoming_deliverables = sorted_deliverables,
-        active_projects=num_of_active_project
+        active_projects=num_of_active_project, percent_and_ttc=percent_and_ttc,
+        overdue_items = overdue_items
         )
 
 @app.route('/projects', methods=['GET','POST'])
 @login_required
 def project_page():
-    projects = Project.query.filter_by(userId=current_user.userId).all()
+    stmt = (
+        select(Project)
+        .where(Project.userId == current_user.userId)
+        .order_by(
+            case(
+                (Project.status == 'active', 0),
+                else_=1
+            ),Project.projectName
+        )
+    )
+
+    projects = db.session.execute(stmt).scalars().all()
     return render_template('projects.html', projects=projects)
 
 @app.route('/project/new', methods=['GET','POST'])
