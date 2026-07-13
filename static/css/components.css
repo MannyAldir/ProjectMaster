@@ -1,0 +1,102 @@
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+
+    background-color: #4f8ef7;
+    color: white;
+    border-color: #4f8ef7;
+}
+
+.btn-secondary {
+    margin-top: 12px;
+    border-color: #4f8ef7;
+    color: #4f8ef7;
+}
+
+.table-card{
+    background-color: var(--surface-1);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: left;
+}
+
+.card-success{
+    border-left: 3px solid #10b981;
+}
+
+.card-danger{
+    border-left: 3px solid #ef4444;
+}
+
+.data-table{
+    border-collapse: collapse;
+    width: 100%;
+    text-align: left;
+}
+
+.data-table th{
+    padding: 12px;
+}
+
+.data-table td{
+    padding: 16px;
+
+}
+.data-table tr{
+    border-bottom : 2px solid #e2e8f0;
+}
+
+
+thead tr{
+    background-color: #f8fafc;
+}
+
+.progress-container{
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+
+}
+
+.progress-fill{
+    height: 100%;
+    border-radius: 4px;
+    background-color: #4f8ef7;
+    transition: width 0.3s ease;
+
+}
+.form-error {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 8px;
+}
+
+.metric-card{
+    background-color: var(--surface-1);
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap:8px
+
+}
+
+.metric-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 12px;
+    margin-top: 8px;
+}

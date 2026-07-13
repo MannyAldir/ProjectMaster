@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-    {% block content %}
+{% block styles %} <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css')}}"> {% endblock %}  
+{% block content %}
     <h1>Projects</h1>
 
     <div class="new-prj-bttn">
-        <a href="{{ url_for('new_project')}}">Create New Project</a>
+        <a href="{{ url_for('new_project')}}" class="custom-button">Create New Project</a>
     </div>
     
     <section class="project-container" aria-label="Project cards">
@@ -26,8 +27,8 @@
                 <p><strong>Status:</strong> {{ project.status }}</p>
 
               <div class = "project-actions">
-                <a href="{{ url_for('edit_project', projectId=project.projectId) }}">Edit Project</a>
-                <a href="{{ url_for('project_detail', projectId=project.projectId)}}">View details</a>
+                <a href="{{ url_for('edit_project', projectId=project.projectId) }}" class="custom-button">Edit Project</a>
+                <a href="{{ url_for('project_detail', projectId=project.projectId)}}" class="custom-button">View details</a>
               </div>
             
                 

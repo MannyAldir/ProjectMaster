@@ -1,0 +1,19 @@
+.dashboard-container{
+    max-width: 1100px;
+    margin-left: 0;
+    padding: 24px;
+}
+
+.dashboard-metrics{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,240px));
+    gap: 1rem;
+    margin-bottom: 1rem
+}
+
+.dashboard-tables{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
