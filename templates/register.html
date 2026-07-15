@@ -1,39 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
-</head>
-<body>
-    <h1>Register</h1>
-    <form action="/register" method="POST">
-        <div>
-            <label for="firstName">First Name:</label>
-            <input type="text" id="firstName" name="firstName" required>
-        </div>
-        <div>
-            <label for="lastName">Last Name:</label>
-            <input type="text" id="lastName" name="lastName" required>
-        </div>
-        <div>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+{% extends "base.html" %}
+{% block styles %} <link rel="stylesheet" href="{{ url_for('static', filename= 'css/forms.css')}}"> {% endblock %}
 
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
+{% block content %}
 
-        <p class="button">
-            <button type="submit">Register</button>
-        </div>
-
-    </form>
-    
-    <form action="{{ url_for('login')}}" method="GET">
-        <button type="submit">Back to Login</button>
-    </form>
-</body>
-</html>
+    <section class="form-container">
+        <article class="register-card">
+            <h1 class="form-header">Register</h1>
+            <form class="register-form" action="{{ url_for('register') }}" method="POST">
+                <div class="form-field">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-field">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+                <div class="form-field">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-field">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button class="btn btn-primary" type="submit">Register</button>
+                <a class="btn btn-secondary" href="{{ url_for('login')}}">back to login</a>
+            </form>
+         
+        </article>
+    </section>
+{% endblock %}

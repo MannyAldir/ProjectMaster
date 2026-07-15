@@ -1,4 +1,5 @@
-.login-card{
+.login-card,
+.register-card{
     width: 100%;
     max-width: 420px;
     padding: 24px;
@@ -8,7 +9,8 @@
   
 }
 
-.login-form{
+.login-form,
+.register-form{
     display: flex;
     flex-direction: column;
     gap: 16px;

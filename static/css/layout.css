@@ -37,14 +37,16 @@
     list-style-type:none;
 }
 
-.nav-links a{
+.nav-links a,
+.nav-links button{
     display: block;
     padding: 10px 16px;
     color: black;
     text-decoration: none;
 }
 
-.nav-links a:hover{
+.nav-links a:hover,
+.nav-links button:hover{
     background-color: #f1f5f9;
 }
 
@@ -52,4 +54,10 @@
 .nav-active a{
     border-left: 3px solid #4f8ef7;
     font-weight: 500;
+}
+
+.nav-logout-btn{
+    border: none;
+    font : inherit;
+    
 }

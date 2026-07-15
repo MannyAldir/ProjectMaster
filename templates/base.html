@@ -32,7 +32,7 @@
         <ul class = "nav-links">
           <li class="{{ 'nav-active' if request.endpoint == 'dashboard' else ''}}"><a href = "{{ url_for('dashboard') }}">Home</a></li>
           <li class="{{ 'nav-active' if request.endpoint == 'project_page' else ''}}"><a href = "{{ url_for('project_page') }}">Projects</a></li>
-          <li class="{{ 'nav-active' if request.endpoint == 'logout' else ''}}"><form action="{{ url_for('logout') }}" method="POST"><button type="submit">logout</button></form></li>
+          <li class="{{ 'nav-active' if request.endpoint == 'logout' else ''}}"><form action="{{ url_for('logout') }}" method="POST" class="nav-logout-btn"><button type="submit">logout</button></form></li>
         </ul>
       </nav>
 

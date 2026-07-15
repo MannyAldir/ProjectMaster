@@ -1,0 +1,78 @@
+.project-card-header{
+    width: 100%;
+    background-color: var(--surface-1);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin : 20px
+}
+
+.project-card-header-left{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.project-card-header-left p {
+    margin: 0;
+    padding: 2px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.detail-body{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    padding: 24px;
+}
+
+.milestone-card{
+    background-color: var(--surface-2);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.milestone-card p {
+    margin: 0;
+    padding: 2px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.milestone-card-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+
+.milestone-grid{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-list{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.task-list li{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border-bottom: 0.5px solid #e2e8f0;
+}

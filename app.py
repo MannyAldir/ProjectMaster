@@ -1,10 +1,11 @@
 # import dependancy
 from datetime import datetime, date, timedelta
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
-from sqlalchemy import select, func, case
+from sqlalchemy import select, func, case, delete
+
 
 
 # create a Flask object using file name as argument
@@ -100,6 +101,7 @@ def dashboard():
         .where(
             Milestone.status != 'Completed',
             Project.userId == current_user.userId,
+            Project.status != 'completed',
             today <= Milestone.endDate,
             Milestone.endDate <= seven_days_later
         )
@@ -140,6 +142,7 @@ def dashboard():
             Task.milestoneId.is_not(None),
             Task.status != 'Completed',
             Project.userId == current_user.userId,
+            Project.status != 'completed',
             today <= Milestone.endDate,
             Milestone.status != 'Completed',
             Milestone.endDate <= seven_days_later
@@ -169,7 +172,7 @@ def dashboard():
             func.count(Task.taskId).label('total_tasks'), func.count(Task.taskId).filter(Task.status == 'Completed').label('completed_tasks')
         )
         .join(Task, Task.projectId == Project.projectId)
-        .where(Project.userId == current_user.userId)
+        .where(Project.userId == current_user.userId, Project.status != 'completed')
         .group_by(Project.projectId)
 
     )
@@ -411,6 +414,112 @@ def edit_task(projectId,taskId):
         return redirect(url_for('project_detail',projectId=projectId))
     return render_template('edit_task.html', task=task)
 
+@app.route('/project/<int:projectId>/delete', methods=['POST'])
+@login_required
+def delete_project(projectId):
+        # try:
+        #     validate_csrf(request.form.get('csrf_token'))
+        # except ValidationError:
+        #     abort(400)
+        project_stmt = (
+            select(Project)
+            .where(
+                Project.userId == current_user.userId,
+                Project.projectId == projectId
+            )
+        )
+        project = db.session.scalar(project_stmt)
+
+        if project == None:
+            abort(404)
+               
+        milestone_stmt = (
+            select(Milestone)
+            .where(Milestone.projectId == projectId)
+        )
+
+        milestones = db.session.scalars(milestone_stmt).all()
+
+        tasks_stmt = (
+            select(Task)
+            .where(Task.projectId == projectId)
+        )
+
+        tasks = db.session.scalars(tasks_stmt).all()
+
+        for t in tasks:
+            db.session.delete(t)
         
+        for m in milestones:
+            db.session.delete(m)
+        
+        db.session.delete(project)
+        db.session.commit()
+
+
+        return redirect(url_for('project_page'))
+
+@app.route('/project/<int:projectId>/task/<int:taskId>/delete', methods=['POST'])
+@login_required
+def delete_task(projectId, taskId):
+    
+    stmt = (
+        select(Task)
+        .join(Project, Project.projectId == Task.projectId)
+        .where(
+            Task.projectId == projectId,
+            Task.taskId == taskId,
+            current_user.userId == Project.userId
+        )
+    )
+    task = db.session.scalar(stmt)
+
+    if task == None:
+        abort(404)
+    db.session.delete(task)
+    db.session.commit()
+        
+    return redirect(url_for('project_detail' , projectId=projectId) )
+
+@app.route('/project/<int:projectId>/milestone/<int:milestoneId>/delete', methods=['POST'])
+@login_required
+def delete_milestone(projectId,milestoneId):
+    project_stmt = (
+        select(Project)
+        .where(Project.userId == current_user.userId, Project.projectId == projectId)
+    )
+
+    project = db.session.scalar(project_stmt)
+    if project is None:
+        abort(404, description='project not found')
+    
+    milestone_stmt = (
+    select(Milestone)
+    .where(
+        Milestone.milestoneId == milestoneId,
+        Milestone.projectId == projectId
+    )
+        )
+    milestone = db.session.scalar(milestone_stmt)
+
+    if milestone is None:
+        abort(404, description='milestone not found')
+
+    task_stmt = (
+        select(Task)
+        .where(Task.projectId == projectId, Task.milestoneId == milestoneId)
+    )
+
+    tasks = db.session.scalars(task_stmt).all()
+
+    for t in tasks:
+        db.session.delete(t)
+
+    db.session.delete(milestone)
+    db.session.commit()
+    
+    return redirect(url_for('project_detail', projectId=projectId))
+       
+
 if __name__ == '__main__':
     app.run(debug=True)
