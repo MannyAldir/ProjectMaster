@@ -1,5 +1,6 @@
 .login-card,
-.register-card{
+.register-card,
+.new-project-card{
     width: 100%;
     max-width: 420px;
     padding: 24px;
@@ -10,7 +11,8 @@
 }
 
 .login-form,
-.register-form{
+.register-form,
+.new-project-form{
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -29,8 +31,37 @@
     border-radius: 4px;
 }
 
+.form-field textarea {
+    padding: 10px;
+    font: inherit;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-field select {
+    padding: 10px;
+    font: inherit;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: white;
+}
+
 .form-container{
     padding: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.btn-group{
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    gap: 1rem;
+}
+
+.card-title{
     display: flex;
     justify-content: center;
 }
