@@ -56,7 +56,7 @@
                             {% endif %}
                                 <ul class="task-list">
                                   {% if tasks %}
-                                    <li><a class="btn btn-secondary" href="{{ url_for('new_task', projectId = project.projectId)}}">new task</a></li>
+                                    <li><a class="btn btn-secondary" href="{{ url_for('new_task', projectId = project.projectId, milestoneId=milestone.milestoneId)}}">new task</a></li>
                                     {% for task in tasks %}
                                           {% if task.milestoneId == milestone.milestoneId %}
                                           <li>{{ task.taskName }}  <strong>Status:</strong> {{ task.status }}
@@ -68,7 +68,7 @@
                                           {% endif %}
                                     {% endfor %}
                                   {% else %}
-                                    <li><a class="btn btn-secondary" href="{{ url_for('new_task', projectId = project.projectId)}}">new task</a></li>
+                                    <li><a class="btn btn-secondary" href="{{ url_for('new_task', projectId = project.projectId, milestoneId = milestone.milestoneId)}}">new task</a></li>
                                   {% endif %}
                                 </ul>
                           </div>
@@ -82,8 +82,8 @@
                              <div class="independent-task-column">
                  <h3>Independent Tasks:</h3>
                  {% if independentTasks %}
-                    <ul class="independent-task-list">
-                      <li><a class="btn btn-secondary" href=" {{ url_for('new_task', projectId = project.projectId) }}">Create independent task</a></li>
+                    <ul class="task-list">
+                      <li><a class="btn btn-secondary" href=" {{ url_for('new_task', projectId = project.projectId, milestoneId = 'none') }}">Create independent task</a></li>
                       {% for task in independentTasks %}
                         <li>{{ task.taskName }} <a href="{{ url_for('edit_task', projectId=project.projectId, taskId=task.taskId)}}" class="btn btn-secondary">edit task</a>
                           <form method="POST" action="{{ url_for('delete_task', projectId=project.projectId, taskId=task.taskId) }}">
@@ -93,8 +93,8 @@
                       {% endfor %}
                     </ul>
                   {% else %}
-                    <ul class="independent-task-list">
-                      <li><a class="btn btn-secondary" href=" {{ url_for('new_task', projectId = project.projectId) }}">Create independent task</a></li>
+                    <ul class="task-list">
+                      <li><a class="btn btn-secondary" href=" {{ url_for('new_task', projectId = project.projectId, milestoneId = 'none') }}">Create independent task</a></li>
                     </ul>
                   {% endif %}
                              </div>
