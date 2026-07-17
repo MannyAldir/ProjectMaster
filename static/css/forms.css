@@ -1,6 +1,7 @@
 .login-card,
 .register-card,
 .new-project-card,
+.new-milestone-card,
 .edit-project-card,
 .edit-milestone-card{
     width: 100%;
@@ -15,6 +16,7 @@
 .login-form,
 .register-form,
 .new-project-form,
+.new-milestone-form,
 .edit-project-form,
 .edit-mileestone-form{
     display: flex;
