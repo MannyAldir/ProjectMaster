@@ -68,7 +68,7 @@
                                           {% endif %}
                                     {% endfor %}
                                   {% else %}
-                                    <li><a class="btn btn-secondary" href="{{ url_for('new_task', projectId = project.projectId)}}">new task</a></li>
+                                    <li><a class="btn btn-secondary" href="{{ url_for('new_task', projectId = project.projectId, milestoneId = milestone.milestoneId)}}">new task</a></li>
                                   {% endif %}
                                 </ul>
                           </div>
