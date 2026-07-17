@@ -1,7 +1,8 @@
 .login-card,
 .register-card,
 .new-project-card,
-.edit-project-card{
+.edit-project-card,
+.edit-milestone-card{
     width: 100%;
     max-width: 420px;
     padding: 24px;
@@ -14,7 +15,8 @@
 .login-form,
 .register-form,
 .new-project-form,
-.edit-project-form{
+.edit-project-form,
+.edit-mileestone-form{
     display: flex;
     flex-direction: column;
     gap: 16px;
