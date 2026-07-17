@@ -374,9 +374,9 @@ def edit_milestone(projectId,milestoneId):
         return redirect(url_for('project_detail', projectId=projectId))
     return render_template('edit_milestone.html',milestone=milestone, project=project)
 
-@app.route('/project/<int:projectId>/newTask', methods=['GET', 'POST'])
+@app.route('/project/<int:projectId>/milestone/<milestoneId>/newTask', methods=['GET', 'POST'])
 @login_required
-def new_task(projectId):
+def new_task(projectId, milestoneId):
     project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
     milestones = Milestone.query.filter_by(projectId=projectId).all()
     
@@ -385,19 +385,21 @@ def new_task(projectId):
         taskDescription = request.form['taskDescription']
         taskDueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d') if request.form['taskDueDate'] else None
         taskStatus = request.form['taskStatus']
-        milestoneId = int(request.form['taskAssignment'])
+        
+        if milestoneId == 'none':
+            milestoneId = None
+        else:
+            milestoneId = int(milestoneId)
 
         newTask = Task(
             projectId = projectId, milestoneId=milestoneId,
             taskName=taskName, description=taskDescription,
             dueDate = taskDueDate, status=taskStatus
-        ) if milestoneId != 0 else Task(projectId= projectId, milestoneId=None, taskName = taskName, 
-                                        description=taskDescription, dueDate = taskDueDate, status = taskStatus)
-        
+        ) 
         db.session.add(newTask)
         db.session.commit()
         return redirect(url_for('project_detail', projectId=projectId))
-    return render_template('new_task.html', projectId=projectId, milestones=milestones)
+    return render_template('new_task.html', projectId=projectId, milestones=milestones, milestoneId=milestoneId)
 
 @app.route('/project/<int:projectId>/task/<int:taskId>/edit', methods=['GET', 'POST'])
 @login_required
