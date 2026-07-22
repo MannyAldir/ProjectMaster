@@ -1,10 +1,11 @@
 # import dependancy
 from datetime import datetime, date, timedelta
-from flask import Flask, render_template, request, redirect, url_for, session, abort
+from flask import Flask, flash, render_template, request, redirect, url_for, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from sqlalchemy import select, func, case, delete
+from validation_forms.registration import RegistrationForm
 
 
 
@@ -64,16 +65,26 @@ def logout():
 
 @app.route('/register', methods=['GET','POST'])
 def register():
-    if request.method == 'POST':
-        firstName = request.form['firstName']
-        lastName = request.form['lastName']
-        email = request.form['email']
-        password = request.form['password']
-        passwordHash = generate_password_hash(password)
-        db.session.add(User(firstName=firstName, lastName=lastName, email=email, passwordHash=passwordHash))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        email = form.email.strip().lower()
+
+        if User.query.first(email=email):
+            form.email.errors.append("Email already registered")
+            return render_template('register.html',form = form)
+        user =(
+            User(
+            firstName = form.first_name.data.strip(),
+            lastName = form.last_name.data.strip(),
+            passwordHash = generate_password_hash(form.password.data),
+            email = email
+
+        ))
+        db.session.add(user)
         db.session.commit()
+        flash("Registration Successful.", 'success')
         return redirect(url_for('login'))
-    return render_template('register.html')
+    return render_template('register.html', form = form)
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
