@@ -67,7 +67,7 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        email = form.email.strip().lower()
+        email = form.email.data.strip().lower()
 
         if User.query.first(email=email):
             form.email.errors.append("Email already registered")
