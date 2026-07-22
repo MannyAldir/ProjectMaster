@@ -6,22 +6,43 @@
     <section class="form-container">
         <article class="register-card">
             <h1 class="form-header">Register</h1>
-            <form class="register-form" action="{{ url_for('register') }}" method="POST">
+            <form class="register-form" method="POST">
+                {{ form.hidden_tag() }}
                 <div class="form-field">
-                    <label for="firstName">First Name:</label>
-                    <input type="text" id="firstName" name="firstName" required>
+                    {{ form.first_name.label}}
+                    {{ form.first_name()}}
+                    {% for error in form.first_name.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
                 </div>
                 <div class="form-field">
-                    <label for="lastName">Last Name:</label>
-                    <input type="text" id="lastName" name="lastName" required>
+                    {{ form.last_name.label }}
+                    {{ form.last_name() }}
+                    {% for error in form.last_name.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
                 </div>
                 <div class="form-field">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    {{ form.email.label }}
+                    {{ form.email()}}
+                    {% for error in form.email.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
                 </div>
                 <div class="form-field">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    {{ form.password.label}}
+                    {{ form.password()}}
+                    {% for error in form.password.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+
+                <div class="form-field">
+                    {{ form.confirm_password.label }}
+                    {{ form.confirm_password()}}
+                    {% for error in form.confirm_password.errors %}
+                       <span class="error">{{ error }}</span>
+                    {% endfor %}
                 </div>
                 
                 <button class="btn btn-primary" type="submit">Register</button>

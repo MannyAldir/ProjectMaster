@@ -2,12 +2,12 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField
 from wtforms.validators import DataRequired,  Length, EqualTo, Email
 
-def strip_whitespace(value:str)->str | None:
+def strip_whitespace(value:str | None)->str | None:
     if value:
         return value.strip()
     return value
 
-class Registration(FlaskForm):
+class RegistrationForm(FlaskForm):
     first_name = StringField(
         'First Name',
         validators= [ 
@@ -31,7 +31,7 @@ class Registration(FlaskForm):
         validators=[
             DataRequired(),
             Email(message='Invalid email address'),
-            Length(min=6, max=35)
+            Length(min=6, max=120)
         ],
         filters=[strip_whitespace]
     )
