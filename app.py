@@ -69,7 +69,7 @@ def register():
     if form.validate_on_submit():
         email = form.email.data.strip().lower()
 
-        if User.query.first(email=email):
+        if User.query.filter_by(email=email).first():
             form.email.errors.append("Email already registered")
             return render_template('register.html',form = form)
         user =(
