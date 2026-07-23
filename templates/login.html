@@ -9,6 +9,9 @@
       <article class="login-card">
           <h1 class="form-header">Login</h1>
           <form class="login-form" action="{{ url_for('login') }}" method="POST">
+            {% for message in get_flashed_messages() %}
+            <span class="success">{{ message }}</span>
+            {% endfor %}
             <div class="form-field">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email">
