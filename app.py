@@ -535,9 +535,10 @@ def delete_milestone(projectId,milestoneId):
 
 @app.route('/calendar/<int: userId>/', methods=['GET'])
 @login_required
-def calendar():
-   return render_template('calendar.html', userId = current_user.userId)
-       
+def calendar(userId):
+    if userId != current_user.userId:
+        abort(404)
+    return render_template('calendar.html', userId=current_user.userId)
 
 if __name__ == '__main__':
     app.run(debug=True)
