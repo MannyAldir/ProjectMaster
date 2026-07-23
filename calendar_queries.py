@@ -1,4 +1,3 @@
-f
 from models import Milestone, Task, Project
 from sqlalchemy import select
 from models import db

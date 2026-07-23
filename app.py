@@ -1,11 +1,13 @@
 # import dependancy
 from datetime import datetime, date, timedelta
-from flask import Flask, flash, render_template, request, redirect, url_for, session, abort
+from flask import Flask, flash, jsonify, render_template, request, redirect, url_for, session, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from sqlalchemy import select, func, case, delete
 from validation_forms.registration import RegistrationForm
+from calendar_queries import get_all_milestones_from_user, get_all_tasks_from_user
+from calendar_helper import *
 
 
 
@@ -533,12 +535,24 @@ def delete_milestone(projectId,milestoneId):
     
     return redirect(url_for('project_detail', projectId=projectId))
 
-@app.route('/calendar/<int: userId>/', methods=['GET'])
+@app.route('/calendar/<int:userId>', methods=['GET'])
 @login_required
 def calendar(userId):
     if userId != current_user.userId:
         abort(404)
     return render_template('calendar.html', userId=current_user.userId)
 
+@app.route('/calendar/events', methods=['GET'])
+@login_required
+def calendar_json():
+    userId = current_user.userId
+    tasks = get_all_tasks_from_user(userId)
+    milestones = get_all_milestones_from_user(userId)
+    milestone_events = get_milestone_events(milestones)
+    task_events = get_task_events(tasks)
+    return jsonify(milestone_events + task_events)
+
+    
+    
 if __name__ == '__main__':
     app.run(debug=True)
