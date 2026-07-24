@@ -535,12 +535,10 @@ def delete_milestone(projectId,milestoneId):
     
     return redirect(url_for('project_detail', projectId=projectId))
 
-@app.route('/calendar/<int:userId>', methods=['GET'])
+@app.route('/calendar', methods=['GET'])
 @login_required
-def calendar(userId):
-    if userId != current_user.userId:
-        abort(404)
-    return render_template('calendar.html', userId=current_user.userId)
+def calendar():
+    return render_template('calendar.html')
 
 @app.route('/calendar/events', methods=['GET'])
 @login_required

@@ -15,7 +15,7 @@ def convert_task_to_event(task : Task | None , project : Project | None)->dict:
         'title' : task.taskName,
         'start' : task.dueDate.isoformat(),
         'color' : get_project_color(task.projectId),
-        'display' : 'auto',
+        'display' : 'list-item',
         'extendedProps' : {
             'projectId' : project.projectId,
             'projectName' : project.projectName,

@@ -2,6 +2,9 @@
 <!-- CSS styles here -->
 {% block styles %}
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@7.0.1/skeleton.css' rel='stylesheet' />
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@7.0.1/themes/monarch/theme.css' rel='stylesheet' />
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@7.0.1/themes/monarch/palettes/purple.css' rel='stylesheet' />
+
 {% endblock %}
 <!-- JavaScript here -->
  {% block scripts %}
@@ -13,12 +16,19 @@
         var calendarEl = document.getElementById("calendar");
         var calendar = new FullCalendar.Calendar(calendarEl, {
           initialView: "dayGridMonth",
+          eventMaxStack: 3,
+          headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek'
+        },
+          events: "{{ url_for('calendar_json') }}"
         });
         calendar.render();
       });
 </script>
 
- {% endblock %}
+{% endblock %}
 
 <!-- Main content -->
 {% block content %}
