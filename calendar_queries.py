@@ -3,9 +3,9 @@ from sqlalchemy import select
 from models import db
 
 # query all milestones and tasks from active projects
-def get_all_milestones_from_user(user_id : int)->list[Milestone]:
+def get_all_milestones_from_user(user_id : int)->list[(Milestone,Project)]:
     stmt = (
-        select(Milestone)
+        select(Milestone,Project)
         .join(Project, Project.projectId == Milestone.projectId)
         .where(
             Project.status == 'active',
@@ -14,11 +14,11 @@ def get_all_milestones_from_user(user_id : int)->list[Milestone]:
       
     )
 
-    return db.session.scalars(stmt).all()
+    return db.session.execute(stmt).all()
 
-def get_all_tasks_from_user(user_id : int)->list[Task]:
+def get_all_tasks_from_user(user_id : int)->list[(Task,Project)]:
     stmt = (
-        select(Task)
+        select(Task, Project)
         .join(Project, Project.projectId == Task.projectId)
         .where(
             Project.status == 'active',
@@ -26,4 +26,4 @@ def get_all_tasks_from_user(user_id : int)->list[Task]:
             Task.dueDate.is_not(None)
         )
     )
-    return db.session.scalars(stmt).all()
+    return db.session.execute(stmt).all()
