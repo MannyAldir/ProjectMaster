@@ -1,4 +1,26 @@
 {% extends 'base.html' %}
-<!-- Put in javascript here -->
- {% block content %}
+<!-- CSS styles here -->
+{% block styles %}
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@7.0.1/skeleton.css' rel='stylesheet' />
+{% endblock %}
+<!-- JavaScript here -->
+ {% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.1/all/global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@7.0.1/themes/monarch/global.js"></script>
+
+<script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var calendarEl = document.getElementById("calendar");
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+        });
+        calendar.render();
+      });
+</script>
+
+ {% endblock %}
+
+<!-- Main content -->
+{% block content %}
+<div id="calendar"></div>
  {% endblock %}
