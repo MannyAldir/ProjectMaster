@@ -6,6 +6,7 @@ from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from sqlalchemy import select, func, case, delete
 from validation_forms.registration import RegistrationForm
+from validation_forms.login import loginForm
 from calendar_queries import get_all_milestones_from_user, get_all_tasks_from_user
 from calendar_helper import *
 
@@ -39,24 +40,13 @@ def load_user(user_id):
 @app.route('/', methods=['POST', 'GET'])
 @app.route('/login', methods=['GET','POST']) # decorator that creates directory path for function
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        # Query database by email
-        user = User.query.filter_by(email=email).first()
-        if user:
-            # check password hash
-            if check_password_hash(user.passwordHash, password):
-                # login user and redirect to dashboard
-                login_user(user)
-                return redirect(url_for('dashboard'))
-            else:
-                return render_template('login.html', error='Invalid password')
-        else:
-            return render_template('login.html', error='Invalid email or password')
-
-
-    return render_template('login.html')
+    form = loginForm()
+    if form.validate_on_submit():
+        user = form.user
+        login_user(user)
+        return redirect(url_for('dashboard'))
+    else:
+        return render_template('login.html', form=form)
 
 @app.route('/logout', methods=['POST'])
 @login_required

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros.html" import with_errors %}
 
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename= 'css/forms.css')}}">
@@ -9,26 +10,16 @@
       <article class="login-card">
           <h1 class="form-header">Login</h1>
           <form class="login-form" action="{{ url_for('login') }}" method="POST">
+            {{ form.hidden_tag() }}
             {% for message in get_flashed_messages() %}
             <span class="success">{{ message }}</span>
             {% endfor %}
-            <div class="form-field">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email">
-            </div>
-            <div class="form-field">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password">
-            </div>
-            
-            <button class="btn btn-primary" type="submit">Sign in</button>
-          </form>
-          
-              {% if error %}
-            <div class="form-error">{{ error }}</div>
-              {% endif %}
+            {{ with_errors(form.email) }}
+            {{ with_errors(form.password) }}
             <p class="form-hint">Don't have an account?</p>
             <a class="btn btn-secondary" href="{{ url_for('register')}}">Create an account</a>
+            <button class=" btn btn-primary" type="submit">login</button>
+          </form>
          
       </article>
     </section>

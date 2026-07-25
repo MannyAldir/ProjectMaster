@@ -5,9 +5,10 @@
             <span class="error"> {{ error | e }}</span>
         {% endfor %}
     {{ field.label }}
-    {% set css_class = 'has_error' + kwargs.pop('class', '') %}
+    {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
     {{ field(class=css_class, **kwargs) }}
     {% else %}
+        {{ field.label }}
         {{ field(**kwargs) }}
     {% endif %}
 </div>

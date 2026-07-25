@@ -73,3 +73,13 @@
     display: flex;
     justify-content: center;
 }
+
+.has_error{
+    background-color: lightcoral;
+    border-color: red;
+}
+
+.error{
+    color: red;
+    margin: 8px;
+}
