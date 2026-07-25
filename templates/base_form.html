@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block styles %} {% endblock %}
+
+{% block content %}
+
+<section class="form-container">
+    <article class="general-card">
+        <h1 class="form-header">{% block form_title %} {% endblock %}</h1>
+        <form class="general-form" method="POST">
+            {{ form.hidden_tag() }}
+            {% block form %}
+                {% block button_group %}
+                
+                {% endblock %}
+            {% endblock %}
+        </form>
+        
+    </article>
+</section>
+
+{% endblock %}
+
+{% endblock %}
+

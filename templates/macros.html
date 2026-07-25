@@ -29,3 +29,16 @@
     {% endif %}
 </div>
 {% endmacro %}
+
+{% macro style_link(file) %}
+<link rel="stylesheet" href="{{ url_for(f'static', filename='css/'' ~ file ~ '.css' )}}">
+{% endmacro %}
+
+{% macro btn_primary(btn_name) %}
+<button class="btn btn-primary" type="submit">btn_name</button>
+{% endblock %}
+
+{% macro btn_secondary(btn_name, route) %}
+<a class="btn btn-primary" href="{{ url_for(route) }}">~ btn_name</a>
+{% endblock %}
+
