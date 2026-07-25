@@ -6,7 +6,7 @@
         {% endfor %}
     {{ field.label }}
     {% set css_class = 'has_error' + kwargs.pop('class', '') %}
-    {{% field(class=css_class, **kwargs) }}
+    {{ field(class=css_class, **kwargs) }}
     {% else %}
         {{ field(**kwargs) }}
     {% endif %}
