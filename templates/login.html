@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "macros.html" import with_errors %}
+{% from "macros.html" import login_errors %}
 
 {% block styles %}
   <link rel="stylesheet" href="{{ url_for('static', filename= 'css/forms.css')}}">
@@ -14,8 +14,8 @@
             {% for message in get_flashed_messages() %}
             <span class="success">{{ message }}</span>
             {% endfor %}
-            {{ with_errors(form.email) }}
-            {{ with_errors(form.password) }}
+            {{ login_errors(form.email) }}
+            {{ login_errors(form.password) }}
             <p class="form-hint">Don't have an account?</p>
             <a class="btn btn-secondary" href="{{ url_for('register')}}">Create an account</a>
             <button class=" btn btn-primary" type="submit">login</button>

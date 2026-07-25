@@ -1,3 +1,4 @@
+.base-card
 .login-card,
 .register-card,
 .new-project-card,
@@ -13,7 +14,7 @@
     background-color: var(--surface-1);
   
 }
-
+.base-form,
 .login-form,
 .register-form,
 .new-project-form,

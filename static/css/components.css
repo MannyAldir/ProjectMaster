@@ -110,3 +110,11 @@ thead tr{
     margin-bottom: 12px;
     margin-top: 8px;
 }
+
+input:invalid {
+border: 2px dashed red;
+}
+
+input:valid {
+border: 2px solid black;
+}
