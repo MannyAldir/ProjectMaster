@@ -82,5 +82,11 @@
 
 .error{
     color: red;
-    margin: 8px;
+    margin: 2px 4px;
+    padding: 6px;
+    align-items: center;
+    display: flex;
+    justify-content: left;
+    
+    
 }

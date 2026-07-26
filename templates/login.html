@@ -4,11 +4,16 @@
 <link rel="stylesheet" href="{{ url_for('static', filename= 'css/forms.css')}}">
 {% endblock %}
 
-   {% block form_title %} Login {% endblock %}
-   {% block form %}
    {% import 'macros.html' as form_macro %}
-   {{ form_macro.login_errors( form.email) }}
-   {{ form_macro.login_errors( form.password ) }}
+   {% block form_title %} Login {% endblock %}
+   {% block errors %} <div class="error">{{ form_macro.print_errors_on_top(form.password) }}</div> {% endblock %}
+   {% block form %}
+  
+   {% import 'macros.html' as form_macro %}
+   <div class="form-field">
+   {{ form_macro.print_form_field( form.email) }}
+   {{ form_macro.print_form_field( form.password ) }}
+   </div>
    <p class="form-hint">Don't have an account?</p>
    <div class="form-field">
    {% block button_group %}

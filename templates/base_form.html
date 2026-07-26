@@ -3,6 +3,13 @@
 <section class="form-container">
     <article class="base-card">
         <h1 class="card-title">{% block form_title %} {% endblock %}</h1>
+        <div class="error-section">
+            {% for message in get_flashed_messages() %}
+            <span class="error">{{ message }}</span>
+            {% endfor %}
+            {% block errors %}
+            {% endblock %}
+        </div>
         <form class="base-form" method="POST">
             {{ form.hidden_tag() }}
             {% block form %}

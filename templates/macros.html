@@ -14,20 +14,22 @@
 </div>
 {% endmacro %}
 
-{% macro login_errors(field) %}
-<div class="form-field">
-    {% if field.errors %}
-        {% for error in field.errors %}
-            <span class="error"> {{ error | e }}</span>
-        {% endfor %}
-    {{ field.label }}
-   
-    {{ field(**kwargs) }}
+{% macro print_errors_on_top(field) %}
+    {{ hi }}
+    {% if field.label == 'password' and len(field.errors)>=1 %}
+        {{ field.errors[0] }}
     {% else %}
-        {{ field.label }}
-        {{ field(**kwargs) }}
+
+    {% for error in field.errors %}
+        {{ error }}
+    {% endfor %}
     {% endif %}
-</div>
+
+{% endmacro %}
+
+{% macro print_form_field(field) %}
+    {{ field.label }}
+    {{ field() }}
 {% endmacro %}
 
 {% macro style_link(file) %}
