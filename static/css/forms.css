@@ -1,4 +1,4 @@
-.base-card
+.base-card,
 .login-card,
 .register-card,
 .new-project-card,
@@ -21,7 +21,7 @@
 .new-milestone-form,
 .new-task-form,
 .edit-project-form,
-.edit-mileestone-form{
+.edit-milestone-form{
     display: flex;
     flex-direction: column;
     gap: 16px;
