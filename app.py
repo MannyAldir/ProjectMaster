@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from sqlalchemy import select, func, case, delete
+from validation_forms.edit_task import TaskForm
 from validation_forms.registration import RegistrationForm
 from validation_forms.login import loginForm
 from calendar_queries import get_all_milestones_from_user, get_all_tasks_from_user
@@ -407,17 +408,35 @@ def new_task(projectId, milestoneId):
 @app.route('/project/<int:projectId>/task/<int:taskId>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_task(projectId,taskId):
-    task = Task.query.filter_by(projectId=projectId, taskId=taskId).first_or_404()
-    if request.method == 'POST':
-        # extract form input
-        task.taskName = request.form['taskName']
-        task.description = request.form['taskDescription']
-        task.dueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d').date() if \
-        request.form['taskDueDate'] else None
-        task.status= request.form['taskStatus']
-        db.session.commit()
-        return redirect(url_for('project_detail',projectId=projectId))
-    return render_template('edit_task.html', task=task)
+    stmt = (
+        select(Task)
+        .join(Project, Task.projectId == Project.projectId)
+        .where(
+            Project.userId == current_user.userId,
+            Task.projectId == projectId,
+            Task.taskId == taskId
+        )
+    )
+    task = db.session.scalar(stmt)
+
+    if task is None:
+        abort(404)
+    
+    form = TaskForm()
+
+
+    if not form.validate_on_submit():
+  
+        render_template('edit_task.html',form = form, task=task, projectId = projectId, taskId=taskId)
+
+        
+    task.taskName = form.name
+    task.description = form.description
+    task.status = form.status
+    task.dueDate = form.due_date
+    db.session.commit()
+    return redirect(url_for('project_detail', ProjectId=projectId))
+    
 
 @app.route('/project/<int:projectId>/delete', methods=['POST'])
 @login_required
