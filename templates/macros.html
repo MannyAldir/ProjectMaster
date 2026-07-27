@@ -15,7 +15,6 @@
 {% endmacro %}
 
 {% macro print_errors_on_top(field) %}
-    {{ hi }}
     {% if field.label == 'password' and len(field.errors)>=1 %}
         {{ field.errors[0] }}
     {% else %}
@@ -40,7 +39,7 @@
 <button class="btn btn-primary" type="submit">{{btn_name}}</button>
 {% endmacro %}
 
-{% macro btn_secondary(btn_name, route) %}
-<a class="btn btn-secondary" href="{{ url_for(route) }}"> {{btn_name}}</a>
+{% macro btn_secondary(btn_name, route, id) %}
+<a class="btn btn-secondary" href="{{ url_for(route, projectId=id) }}"> {{btn_name}}</a>
 {% endmacro %}
 

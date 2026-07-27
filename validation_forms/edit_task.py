@@ -1,10 +1,15 @@
+from flask_wtf.form import _Auto
 from wtforms import ValidationError, TextAreaField, StringField, DateField, SelectField
 from wtforms.validators import Length, DataRequired
 from flask_wtf import FlaskForm
 from datetime import date
 
 class TaskForm(FlaskForm):
-    name = StringField(
+    def __init__(self, existing_data=None, formdata=_Auto, **kwargs):
+        super().__init__(formdata, **kwargs)
+        self.existing_data = existing_data
+
+    taskName = StringField(
         label= 'Task Name',
         validators=[
             DataRequired(message='Field cannot be left blank.')]
@@ -17,15 +22,15 @@ class TaskForm(FlaskForm):
         choices=[('active','Active'), ('inactive', 'Inactive'), ('completed','Completed')]
     )
 
-    due_date = DateField(
+    dueDate = DateField(
         label='Due Date',
         validators=[
             DataRequired('Please select a date.')
         ]
     )
 
-    def validate_due_date(form, field):
-        if field.data < date.today():
-            raise ValidationError(message='Select a present or future date')
+    def validate_dueDate(form, field):
+        if field.data < date.today() and form.existing_data is None :
+            raise ValidationError(message='Invalid: New deliverables cannot assign dates retroactively')
         
         

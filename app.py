@@ -103,7 +103,7 @@ def dashboard():
         select(Milestone)
         .join(Project,Project.projectId == Milestone.projectId)
         .where(
-            Milestone.status != 'Completed',
+            Milestone.status != 'completed',
             Project.userId == current_user.userId,
             Project.status != 'completed',
             today <= Milestone.endDate,
@@ -122,7 +122,7 @@ def dashboard():
         .join(Project, Project.projectId == Task.projectId)
         .where(
             Project.userId == current_user.userId,
-            Task.status != 'Completed',
+            Task.status != 'completed',
             Task.milestoneId.is_(None),
             today <= Task.dueDate,
             Task.dueDate <= seven_days_later
@@ -144,11 +144,11 @@ def dashboard():
         .join(Project, Project.projectId == Task.projectId)
         .where(
             Task.milestoneId.is_not(None),
-            Task.status != 'Completed',
+            Task.status != 'completed',
             Project.userId == current_user.userId,
             Project.status != 'completed',
             today <= Milestone.endDate,
-            Milestone.status != 'Completed',
+            Milestone.status != 'completed',
             Milestone.endDate <= seven_days_later
         )
     )
@@ -173,7 +173,7 @@ def dashboard():
     stmt = (
         select(
             Project.projectId, Project.projectName,
-            func.count(Task.taskId).label('total_tasks'), func.count(Task.taskId).filter(Task.status == 'Completed').label('completed_tasks')
+            func.count(Task.taskId).label('total_tasks'), func.count(Task.taskId).filter(Task.status == 'completed').label('completed_tasks')
         )
         .join(Task, Task.projectId == Project.projectId)
         .where(Project.userId == current_user.userId, Project.status != 'completed')
@@ -208,7 +208,7 @@ def dashboard():
         select(Milestone, Project.projectName.label('projectName'))
         .join(Project,Project.projectId == Milestone.projectId)
         .where(
-            Milestone.status != 'Completed',
+            Milestone.status != 'completed',
             today > Milestone.endDate,
             Project.userId == current_user.userId
         )
@@ -223,7 +223,7 @@ def dashboard():
         .join(Milestone, Milestone.milestoneId == Task.milestoneId)
         .where(Task.milestoneId.is_not(None),
                Project.userId == current_user.userId,
-               Task.status != 'Completed',
+               Task.status != 'completed',
                func.coalesce(Task.dueDate,Milestone.endDate) < today
 
         )
@@ -237,7 +237,7 @@ def dashboard():
         .join(Project, Task.projectId == Project.projectId)
         .where(
             Task.milestoneId.is_(None),
-            Task.status != 'Completed',
+            Task.status != 'completed',
             Task.dueDate < today,
             Project.userId == current_user.userId
         )
@@ -421,21 +421,14 @@ def edit_task(projectId,taskId):
 
     if task is None:
         abort(404)
-    
-    form = TaskForm()
+    form = TaskForm(existing_data=task, obj=task)
 
+    if form.validate_on_submit(): # post request and validated
+        form.populate_obj(task)
+        db.session.commit()
+        return redirect(url_for('project_detail' ,projectId=projectId))
+    return render_template('edit_task.html', form = form, task=task, projectId=projectId, taskId=taskId)
 
-    if not form.validate_on_submit():
-  
-        render_template('edit_task.html',form = form, task=task, projectId = projectId, taskId=taskId)
-
-        
-    task.taskName = form.name
-    task.description = form.description
-    task.status = form.status
-    task.dueDate = form.due_date
-    db.session.commit()
-    return redirect(url_for('project_detail', ProjectId=projectId))
     
 
 @app.route('/project/<int:projectId>/delete', methods=['POST'])

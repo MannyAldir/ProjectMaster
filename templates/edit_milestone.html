@@ -18,9 +18,9 @@
                 <div class = "form-field">
                     <label for="milestoneStatus">Status:</label>
                     <select id="milestoneStatus" name="milestoneStatus">
-                        <option value="Not Started" {% if milestone.status == 'Not Started' %} selected {% endif %} >Not Started</option>
-                        <option value="Started" {% if milestone.status == 'Started' %} selected {% endif %} >Started</option>
-                        <option value="Completed" {% if milestone.status == 'Completed' %} selected {% endif %}>Completed</option>
+                        <option value="inactive" {% if milestone.status == 'inactive' %} selected {% endif %} >Inactive</option>
+                        <option value="active" {% if milestone.status == 'active' %} selected {% endif %} >Active</option>
+                        <option value="completed" {% if milestone.status == 'completed' %} selected {% endif %}>Completed</option>
                     </select>
             
                 </div>
