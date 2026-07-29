@@ -381,29 +381,91 @@ def edit_milestone(projectId,milestoneId):
 @app.route('/project/<int:projectId>/milestone/<milestoneId>/newTask', methods=['GET', 'POST'])
 @login_required
 def new_task(projectId, milestoneId):
-    project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
-    milestones = Milestone.query.filter_by(projectId=projectId).all()
-    
-    if request.method == 'POST':
-        taskName = request.form['taskName']
-        taskDescription = request.form['taskDescription']
-        taskDueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d') if request.form['taskDueDate'] else None
-        taskStatus = request.form['taskStatus']
-        
+
+    # check if project belongs to user
+    # check if milestone is equal to string none
+    # else try tp convert to an integer if it fails abort 404 as it implies someone is maniuplating the url
+    # if the conversion works check that the user actually has this milestone
+    # if the user does not abort
+    # at this point the task is ready to be created from the form
+
+    # step 1 check if the project belong to the user
+    stmt = (
+        select(Project)
+        .where(
+            Project.userId == current_user.userId,
+            Project.projectId == projectId
+        )
+    )
+    project = db.session.scalar(stmt)
+    if not project:
+        abort(404)
+
+    task = Task()
+    form = TaskForm(existing_data=None)
+
+    if form.validate_on_submit():
+
+
         if milestoneId == 'none':
             milestoneId = None
-        else:
-            milestoneId = int(milestoneId)
 
-        newTask = Task(
-            projectId = projectId, milestoneId=milestoneId,
-            taskName=taskName, description=taskDescription,
-            dueDate = taskDueDate, status=taskStatus
-        ) 
-        db.session.add(newTask)
-        db.session.commit()
-        return redirect(url_for('project_detail', projectId=projectId))
-    return render_template('new_task.html', projectId=projectId, milestones=milestones, milestoneId=milestoneId)
+
+            form.populate_obj(task)
+            db.session.add(task)
+            db.session.commit()
+            return redirect(url_for('project_detail', projectId=projectId))
+
+        else:
+            try:
+                int(milestoneId)
+            except ValueError:
+                abort(404)
+            else:
+                # check if milestone exists to the user
+                milestoneId = int(milestoneId)
+                stmt = (
+                    select(Milestone)
+                    .where(Milestone.milestoneId == milestoneId,
+                        Milestone.projectId == projectId)
+                    
+                )
+                milestone = db.session.scalar(stmt)
+                if not milestone:
+                    abort(404)
+
+                form.populate_obj(task)
+                db.session.add(task)
+                db.session.commit()
+                return redirect(url_for('project_detail', projectId=projectId))
+    return render_template('new_task.html', milestoneId=milestoneId, projectId=projectId, form=form)
+
+
+
+
+    # project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
+    # milestones = Milestone.query.filter_by(projectId=projectId).all()
+    
+    # if request.method == 'POST':
+    #     taskName = request.form['taskName']
+    #     taskDescription = request.form['taskDescription']
+    #     taskDueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d') if request.form['taskDueDate'] else None
+    #     taskStatus = request.form['taskStatus']
+        
+    #     if milestoneId == 'none':
+    #         milestoneId = None
+    #     else:
+    #         milestoneId = int(milestoneId)
+
+    #     newTask = Task(
+    #         projectId = projectId, milestoneId=milestoneId,
+    #         taskName=taskName, description=taskDescription,
+    #         dueDate = taskDueDate, status=taskStatus
+    #     ) 
+    #     db.session.add(newTask)
+    #     db.session.commit()
+    #     return redirect(url_for('project_detail', projectId=projectId))
+    # return render_template('new_task.html', projectId=projectId, milestones=milestones, milestoneId=milestoneId)
 
 @app.route('/project/<int:projectId>/task/<int:taskId>/edit', methods=['GET', 'POST'])
 @login_required
