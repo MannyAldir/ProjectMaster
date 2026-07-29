@@ -75,7 +75,7 @@
                           {% endfor %}
                         </div>
                           {% else %}
-                          None
+                          <h4>No available milestones </h4>
                           {% endif %}
                 </div>
                 <!-- Independent Task section -->
@@ -93,6 +93,7 @@
                       {% endfor %}
                     </ul>
                   {% else %}
+                    <h4>No available independent tasks</h4>
                     <ul class="task-list">
                       <li><a class="btn btn-secondary" href=" {{ url_for('new_task', projectId = project.projectId, milestoneId = 'none') }}">Create independent task</a></li>
                     </ul>

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
-{% block styles %} <link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css')}}"> {% endblock %}  
+{% block styles %} 
+<link rel="stylesheet" href="{{ url_for('static', filename='css/projects.css')}}"> 
+<link rel="stylesheet" href="{{ url_for('static', filename= 'css/forms.css') }}"> 
+{% endblock %}  
 {% block content %}
     <h1>Projects</h1>
 
@@ -26,9 +29,9 @@
                 
                 <p><strong>Status:</strong> {{ project.status }}</p>
 
-              <div class = "project-actions">
-                <a href="{{ url_for('edit_project', projectId=project.projectId) }}" class="custom-button">Edit Project</a>
-                <a href="{{ url_for('project_detail', projectId=project.projectId)}}" class="custom-button">View details</a>
+              <div class = "btn-group">
+                <a href="{{ url_for('edit_project', projectId=project.projectId) }}" class="btn btn-secondary">Edit Project</a>
+                <a href="{{ url_for('project_detail', projectId=project.projectId)}}" class="btn btn-primary">View details</a>
               </div>
             
                 
