@@ -1,6 +1,6 @@
 from flask_wtf.form import _Auto
 from wtforms import ValidationError, TextAreaField, StringField, DateField, SelectField
-from wtforms.validators import Length, DataRequired
+from wtforms.validators import Length, DataRequired, Optional
 from flask_wtf import FlaskForm
 from datetime import date
 
@@ -24,13 +24,11 @@ class TaskForm(FlaskForm):
 
     dueDate = DateField(
         label='Due Date',
-        validators=[
-            DataRequired('Please select a date.')
-        ]
+        validators=[Optional()]
     )
 
     def validate_dueDate(form, field):
-        if field.data < date.today() and form.existing_data is None :
+        if field.data is not None and field.data < date.today() and form.existing_data is None :
             raise ValidationError(message='Invalid: New deliverables cannot assign dates retroactively')
         
         
