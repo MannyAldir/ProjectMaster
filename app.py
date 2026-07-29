@@ -401,7 +401,7 @@ def new_task(projectId, milestoneId):
     if not project:
         abort(404)
 
-    task = Task()
+    task = Task(projectId=projectId, milestoneId=milestoneId)
     form = TaskForm(existing_data=None)
 
     if form.validate_on_submit():
