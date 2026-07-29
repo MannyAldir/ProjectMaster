@@ -37,7 +37,7 @@ class TaskForm(FlaskForm):
             raise ValidationError("You cannot have a past date for a new task")
 
         # Case allow an existing task to have no date
-        if field.data == form.existing_data.dueDate:
+        if form.existing_data and field.data == form.existing_data.dueDate:
             return
 
         # case existing tasks cannot modify their dates to the past
