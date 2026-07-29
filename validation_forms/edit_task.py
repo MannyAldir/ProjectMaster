@@ -28,7 +28,21 @@ class TaskForm(FlaskForm):
     )
 
     def validate_dueDate(form, field):
-        if field.data is not None and field.data < date.today() and form.existing_data is None :
-            raise ValidationError(message='Invalid: New deliverables cannot assign dates retroactively')
+        # case the field does not have a date
+        if field.data is None:
+            return
+
+        # case the task is new then it cannot have a previous date
+        if form.existing_data is None and field.data < date.today():
+            raise ValidationError("You cannot have a past date for a new task")
+
+        # Case allow an existing task to have no date
+        if field.data == form.existing_data.dueDate:
+            return
+
+        # case existing tasks cannot modify their dates to the past
+        if form.existing_data and field.data < date.today():
+            raise ValidationError("You cannot change your due date to the past unless it was previously empty")
+
         
         
