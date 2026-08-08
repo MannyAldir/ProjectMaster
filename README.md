@@ -134,6 +134,7 @@ or
 
 ```bash
 python app.py
+```
 
 ## Limitations
 - **No HTTPS protocol**
