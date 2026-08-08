@@ -52,6 +52,32 @@ Project Master is a web-based project management application that enables users 
 - User-scoped database queries.
 - Server-side input validation.
 
+## Tech Stack
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript
+- Jinja2 Templates
+- FullCalendar
+
+### Backend
+
+- Flask
+- SQLAlchemy ORM
+
+### Authentication & Security
+
+- Flask-Login
+- Flask-WTF
+- WTForms
+- Werkzeug (Password Hashing)
+
+### Database
+
+- SQLite
+
 
 ## Screenshots
 
