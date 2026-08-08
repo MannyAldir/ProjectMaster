@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#333333" />
+    </marker>
+    <style>
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 28px; font-weight: 700; fill: #111827; }
+      .layer-title { font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: 700; fill: #111827; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 15px; fill: #111827; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 13px; fill: #374151; }
+      .note { font-family: Arial, Helvetica, sans-serif; font-size: 12.5px; fill: #374151; }
+      .box { fill: #ffffff; stroke: #1f2937; stroke-width: 1.5; rx: 12; ry: 12; }
+      .layer { fill: #f9fafb; stroke: #6b7280; stroke-width: 1.5; rx: 16; ry: 16; }
+      .frontend { fill: #eef6ff; }
+      .backend { fill: #fff7ed; }
+      .components { fill: #f0fdf4; }
+      .models { fill: #f5f3ff; }
+      .database { fill: #fef2f2; }
+      .side { fill: #ffffff; stroke: #4b5563; stroke-width: 1.3; rx: 10; ry: 10; }
+      .arrow { stroke: #333333; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .return { stroke: #6b7280; stroke-width: 1.8; stroke-dasharray: 7 5; fill: none; marker-end: url(#arrow); }
+      .sidearrow { stroke: #4b5563; stroke-width: 1.7; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="900" fill="#ffffff"/>
+  <text x="600" y="45" text-anchor="middle" class="title">Project Master High-Level Architecture</text>
+
+  <!-- Main layers -->
+  <rect x="315" y="75" width="570" height="90" class="layer"/>
+  <text x="600" y="105" text-anchor="middle" class="layer-title">User / Browser Layer</text>
+  <text x="600" y="132" text-anchor="middle" class="label">User interacts with Project Master through a web browser</text>
+  <text x="600" y="154" text-anchor="middle" class="small">Requests pages, submits forms, and views rendered responses</text>
+
+  <rect x="315" y="205" width="570" height="105" class="layer frontend"/>
+  <text x="600" y="234" text-anchor="middle" class="layer-title">Front-End Interface Layer</text>
+  <text x="600" y="260" text-anchor="middle" class="label">Jinja2-rendered HTML pages</text>
+  <text x="600" y="282" text-anchor="middle" class="small">HTML • CSS • JavaScript • Forms • Calendar View</text>
+
+  <rect x="315" y="350" width="570" height="105" class="layer backend"/>
+  <text x="600" y="379" text-anchor="middle" class="layer-title">Flask Backend / Controller Layer</text>
+  <text x="600" y="405" text-anchor="middle" class="label">Flask routes handle GET/POST requests</text>
+  <text x="600" y="427" text-anchor="middle" class="small">Authentication checks • Form processing • Redirects • Rendered responses</text>
+
+  <rect x="315" y="495" width="570" height="125" class="layer components"/>
+  <text x="600" y="523" text-anchor="middle" class="layer-title">Application Components Layer</text>
+  <rect x="342" y="543" width="162" height="28" class="box"/><text x="423" y="562" text-anchor="middle" class="small">Authentication</text>
+  <rect x="518" y="543" width="162" height="28" class="box"/><text x="599" y="562" text-anchor="middle" class="small">Projects</text>
+  <rect x="694" y="543" width="162" height="28" class="box"/><text x="775" y="562" text-anchor="middle" class="small">Milestones</text>
+  <rect x="342" y="582" width="162" height="28" class="box"/><text x="423" y="601" text-anchor="middle" class="small">Tasks</text>
+  <rect x="518" y="582" width="162" height="28" class="box"/><text x="599" y="601" text-anchor="middle" class="small">Dashboard Metrics</text>
+  <rect x="694" y="582" width="162" height="28" class="box"/><text x="775" y="601" text-anchor="middle" class="small">Calendar Visualization</text>
+
+  <rect x="315" y="660" width="570" height="90" class="layer models"/>
+  <text x="600" y="689" text-anchor="middle" class="layer-title">Model / Data Access Layer</text>
+  <text x="600" y="715" text-anchor="middle" class="label">Flask-SQLAlchemy Models</text>
+  <text x="600" y="737" text-anchor="middle" class="small">User • Project • Milestone • Task</text>
+
+  <rect x="315" y="790" width="570" height="75" class="layer database"/>
+  <text x="600" y="819" text-anchor="middle" class="layer-title">Database Layer</text>
+  <text x="600" y="846" text-anchor="middle" class="label">SQLite database stores users, projects, milestones, and tasks</text>
+
+  <!-- Main arrows down -->
+  <path d="M600 166 L600 198" class="arrow"/>
+  <path d="M600 312 L600 343" class="arrow"/>
+  <path d="M600 457 L600 488" class="arrow"/>
+  <path d="M600 622 L600 653" class="arrow"/>
+  <path d="M600 752 L600 783" class="arrow"/>
+
+  <!-- Response flow up dashed on right -->
+  <path d="M914 827 C980 827 980 704 895 704" class="return"/>
+  <path d="M895 704 C980 704 980 556 895 556" class="return"/>
+  <path d="M895 556 C980 556 980 402 895 402" class="return"/>
+  <path d="M895 402 C980 402 980 256 895 256" class="return"/>
+  <path d="M895 256 C980 256 980 120 895 120" class="return"/>
+
+  <!-- Side dependency boxes -->
+  <rect x="40" y="222" width="245" height="72" class="side"/>
+  <text x="162.5" y="247" text-anchor="middle" class="layer-title">FullCalendar</text>
+  <text x="162.5" y="270" text-anchor="middle" class="note">Renders prepared</text>
+  <text x="162.5" y="288" text-anchor="middle" class="note">calendar event data</text>
+  <path d="M285 258 L308 258" class="sidearrow"/>
+
+  <rect x="40" y="343" width="245" height="64" class="side"/>
+  <text x="162.5" y="368" text-anchor="middle" class="layer-title">Flask-Login</text>
+  <text x="162.5" y="391" text-anchor="middle" class="note">Sessions and protected routes</text>
+  <path d="M285 375 L308 390" class="sidearrow"/>
+
+  <rect x="40" y="423" width="245" height="64" class="side"/>
+  <text x="162.5" y="447" text-anchor="middle" class="label">Flask-WTF / WTForms</text>
+  <text x="162.5" y="471" text-anchor="middle" class="note">Form validation</text>
+  <path d="M285 455 L308 410" class="sidearrow"/>
+
+  <rect x="915" y="515" width="245" height="64" class="side"/>
+  <text x="1037.5" y="540" text-anchor="middle" class="layer-title">Werkzeug</text>
+  <text x="1037.5" y="563" text-anchor="middle" class="note">Password hashing and verification</text>
+  <path d="M915 547 L891 557" class="sidearrow"/>
+
+  <!-- Notes -->
+  <rect x="20" y="700" width="285" height="145" class="side"/>
+  <text x="162.5" y="725" text-anchor="middle" class="layer-title">Access Rules</text>
+  <text x="78" y="751" class="note">• Unauthenticated users:</text>
+  <text x="92" y="770" class="note">login and registration</text>
+  <text x="78" y="794" class="note">• Authenticated users:</text>
+  <text x="92" y="813" class="note">dashboard, projects,</text>
+  <text x="92" y="832" class="note">tasks, milestones, calendar</text>
+
+  <rect x="895" y="650" width="285" height="130" class="side"/>
+  <text x="1037.5" y="675" text-anchor="middle" class="layer-title">Design Notes</text>
+  <text x="935" y="701" class="note">• Validate forms before</text>
+  <text x="949" y="720" class="note">database changes</text>
+  <text x="935" y="744" class="note">• FullCalendar does not</text>
+  <text x="949" y="763" class="note">query SQLite directly</text>
+
+</svg>
