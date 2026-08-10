@@ -10,17 +10,13 @@ from validation_forms.registration import RegistrationForm
 from validation_forms.login import loginForm
 from calendar_queries import get_all_milestones_from_user, get_all_tasks_from_user
 from calendar_helper import *
-
-
+from config import Config
 
 # create a Flask object using file name as argument
 app = Flask(__name__) 
 
-# set up configuration for SQLAlchemy
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///projectmaster.db'
-
-# secret key for session management
-app.config['SECRET_KEY'] = 'development-secret-key'
+#set up configuration
+app.config.from_object(Config)
 
 # set connection between Flask app and SQLAlchemy
 db.init_app(app)
