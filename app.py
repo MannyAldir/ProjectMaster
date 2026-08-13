@@ -52,7 +52,6 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
     
-
 @app.route('/register', methods=['GET','POST'])
 def register():
     form = RegistrationForm()
@@ -79,11 +78,7 @@ def register():
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
-    
-    # calculate dashboard metrics
-
     # Calculate total number of active projects
-    
     num_of_active_project = db.session.scalar(select(func.count(Project.projectId)).where(
         Project.userId == current_user.userId,
         Project.status == 'active'
@@ -295,15 +290,13 @@ def new_project():
 @login_required
 def edit_project(projectId):
         
-        project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first()
-        if request.method == 'POST':
-            project.projectName = request.form['projectName']
-            project.description = request.form['description']
-            project.status = request.form['status']
-            project.startDate = datetime.strptime(request.form['startDate'], '%Y-%m-%d').date() if request.form['startDate'] else None
+        project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
+        form = ProjectForm(existing_data=project)
+        if form.validate_on_submit():
+            form.populate_obj(project)
             db.session.commit()
             return redirect(url_for('project_page'))
-        return render_template('edit_project.html', project=project)
+        return render_template('edit_project.html', form=form)
 
 @app.route('/project/<int:projectId>', methods=['GET'])
 @login_required
@@ -410,31 +403,6 @@ def new_task(projectId, milestoneId):
         return redirect(url_for('project_detail', projectId=projectId))
     return render_template('new_task.html', milestoneId=milestoneId, projectId=projectId, form=form)
 
-
-    # project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
-    # milestones = Milestone.query.filter_by(projectId=projectId).all()
-    
-    # if request.method == 'POST':
-    #     taskName = request.form['taskName']
-    #     taskDescription = request.form['taskDescription']
-    #     taskDueDate = datetime.strptime(request.form['taskDueDate'], '%Y-%m-%d') if request.form['taskDueDate'] else None
-    #     taskStatus = request.form['taskStatus']
-        
-    #     if milestoneId == 'none':
-    #         milestoneId = None
-    #     else:
-    #         milestoneId = int(milestoneId)
-
-    #     newTask = Task(
-    #         projectId = projectId, milestoneId=milestoneId,
-    #         taskName=taskName, description=taskDescription,
-    #         dueDate = taskDueDate, status=taskStatus
-    #     ) 
-    #     db.session.add(newTask)
-    #     db.session.commit()
-    #     return redirect(url_for('project_detail', projectId=projectId))
-    # return render_template('new_task.html', projectId=projectId, milestones=milestones, milestoneId=milestoneId)
-
 @app.route('/project/<int:projectId>/task/<int:taskId>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_task(projectId,taskId):
@@ -459,7 +427,6 @@ def edit_task(projectId,taskId):
         return redirect(url_for('project_detail' ,projectId=projectId))
     return render_template('edit_task.html', form = form, task=task, projectId=projectId, taskId=taskId)
 
-    
 
 @app.route('/project/<int:projectId>/delete', methods=['POST'])
 @login_required
@@ -581,8 +548,6 @@ def calendar_json():
     milestone_events = get_milestone_events(milestones)
     task_events = get_task_events(tasks)
     return jsonify(milestone_events + task_events)
-
-    
     
 if __name__ == '__main__':
     app.run(debug=True)
