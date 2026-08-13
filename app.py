@@ -291,7 +291,7 @@ def new_project():
 def edit_project(projectId):
         
         project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
-        form = ProjectForm(existing_data=project)
+        form = ProjectForm(existing_data=project, obj=project)
         if form.validate_on_submit():
             form.populate_obj(project)
             db.session.commit()
