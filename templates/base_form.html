@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{% from 'macros.html' import with_errors, btn_primary, btn_secondary %}
+
 <section class="form-container">
     <article class="base-card">
         <h1 class="card-title">{% block form_title %} {% endblock %}</h1>
@@ -14,9 +14,10 @@
         <form class="base-form" method="POST">
             {{ form.hidden_tag() }}
             {% block form %}
+            {% from 'macros.html' import with_errors %}
             
                 {% block button_group %}
-                
+                    {% from 'macros.html' import btn_primary, btn_secondary %}
                 {% endblock %}
             {% endblock %}
         </form>
