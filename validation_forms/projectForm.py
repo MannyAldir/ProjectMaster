@@ -39,7 +39,7 @@ class ProjectForm(FlaskForm):
 
         # Allow the user to update an already existing project without throwing a validation error
         # It must be the case that an already existing date should be the same as the date when it was created
-        if form.existing_data and form.existing_data.startDate.date() == field.data:
+        if form.existing_data and form.existing_data.createdAt.date() == field.data:
             return
 
         if form.existing_data and field.data < today:
