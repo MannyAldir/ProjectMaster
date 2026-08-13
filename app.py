@@ -8,6 +8,7 @@ from sqlalchemy import select, func, case, delete
 from validation_forms.edit_task import TaskForm
 from validation_forms.registration import RegistrationForm
 from validation_forms.login import loginForm
+from validation_forms.projectForm import ProjectForm
 from calendar_queries import get_all_milestones_from_user, get_all_tasks_from_user
 from calendar_helper import *
 
@@ -286,22 +287,13 @@ def project_page():
 @app.route('/project/new', methods=['GET','POST'])
 @login_required
 def new_project():
-    if request.method == 'POST':
-        projectName = request.form['projectName']
-        description = request.form['description']
-        status = request.form['status']
-        startDate = request.form['startDate']
+    form = ProjectForm()
+    if form.validate_on_submit():
 
-        # convert html date input to datetime object
-        if startDate:
-            startDate = datetime.strptime(startDate, '%Y-%m-%d')
-        else:
-            startDate = None
-
-        db.session.add(Project(userId=current_user.userId, projectName=projectName, description=description, status=status, startDate=startDate))
+        db.session.add(Project(userId=current_user.userId, projectName=form.projectName.data, description=form.description.data, status=form.status.data, startDate=form.startDate.data))
         db.session.commit()
         return redirect(url_for('project_page'))
-    return render_template('new_project.html')
+    return render_template('new_project.html', form=form)
 
 @app.route('/project/<int:projectId>/edit', methods=['GET','POST'])
 @login_required
