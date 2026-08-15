@@ -5,6 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from models import User, Project, Milestone, Task, db
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from sqlalchemy import select, func, case, delete
+from validation_forms.MilestoneForm import MilestoneForm
 from validation_forms.edit_task import TaskForm
 from validation_forms.registration import RegistrationForm
 from validation_forms.login import loginForm
@@ -324,23 +325,17 @@ def project_detail(projectId):
 @login_required
 def new_milestone(projectId):
     project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
+    new_milestone = Milestone()
     
-    if request.method == 'POST':
-        milestoneName = request.form['milestoneName']
-        milestoneStatus = request.form['milestoneStatus']
-        milestoneDescription = request.form['milestoneDescription']
-        milestoneStartDate = datetime.strptime(request.form['milestoneStartDate'], '%Y-%m-%d').date() if request.form['milestoneStartDate'] else None
-        milestoneEndDate = datetime.strptime(request.form['milestoneEndDate'], '%Y-%m-%d').date() if request.form['milestoneEndDate'] else None
-        newMilestone=Milestone(
-            projectId = projectId, milestoneName = milestoneName, status = milestoneStatus,
-            description = milestoneDescription, startDate = milestoneStartDate,
-            endDate = milestoneEndDate
-        )
+    form = MilestoneForm(existing_date = None, obj=new_milestone)
 
-        db.session.add(newMilestone)
+    if form.validate_on_submit():
+        form.populate_obj(new_milestone)
+
+        db.session.add(new_milestone)
         db.session.commit()
-        return redirect(url_for('project_detail', projectId=project.projectId))
-    return render_template('new_milestone.html',project=project)
+        return redirect(url_for('project_detail', projectId=projectId))
+    return render_template('new_milestone.html',form = form)
 
 @app.route('/project/<int:projectId>/<int:milestoneId>/edit', methods=['GET', 'POST'])
 @login_required
