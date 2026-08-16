@@ -50,10 +50,11 @@ class MilestoneForm(FlaskForm):
         if form.existing_data is None and field.data < date.today():
             raise ValidationError(message= 'Please select a date from today or after today')
 
-        if form.existing_data and field.data == form.existing_data.endDate:
+        if form.existing_data and field.data == form.existing_data.createdAt.date():
             return
 
         if form.existing_data and field.data < date.today():
-            return ValidationError(message='Please select a date from today or after today')
+            raise ValidationError(message='Please select a date from today or after today')
+        
 
 
