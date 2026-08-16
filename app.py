@@ -325,7 +325,7 @@ def project_detail(projectId):
 @login_required
 def new_milestone(projectId):
     project = Project.query.filter_by(projectId=projectId, userId=current_user.userId).first_or_404()
-    new_milestone = Milestone()
+    new_milestone = Milestone(projectId=projectId)
     
     form = MilestoneForm(existing_date = None, obj=new_milestone)
 
@@ -335,7 +335,7 @@ def new_milestone(projectId):
         db.session.add(new_milestone)
         db.session.commit()
         return redirect(url_for('project_detail', projectId=projectId))
-    return render_template('new_milestone.html',form = form)
+    return render_template('new_milestone.html',form = form, projectId=projectId)
 
 @app.route('/project/<int:projectId>/<int:milestoneId>/edit', methods=['GET', 'POST'])
 @login_required
